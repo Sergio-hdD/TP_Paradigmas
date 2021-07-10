@@ -88,8 +88,12 @@ def editarLibro():
     global title__a_buscar #Lo declaro global para que entre acá y la inicializo más arriba como string vacío para poder usarla en otros lados
     if len(title.get()) != 0 and len(description.get("1.0","end")) != 0 and len(price.get()) != 0 : #Si se cargaron todos los campos
         try:
-            update_book(findBookByTitle(title__a_buscar)['id']) 
-            limpiarInputs()
+            #si hay uno con el título que se quiere ingresar y si el título nuevo y el viejo no se diferencian solo en mayúculas/minúsculas ca, no se actualiza para NO repetir títulos         
+            if(findBookByTitle(title.get().title()) and title__a_buscar != title.get().title()): 
+                messagebox.showerror(message = "No se actualiza, ya hay uno con ese título")                  
+            else: #Si no hay con el título o si el título nuevo y el viejo solo se diferencian en mayúculas/minúsculas, esto último mantiene el título (ya que siempre se guarda con el mismo formato), pero permite actualizar descripción y precio
+                update_book(findBookByTitle(title__a_buscar)['id']) 
+                limpiarInputs()
         except: #Si no se puede conectar
             print("Algo falló al intentar actualizar ")
     else:
