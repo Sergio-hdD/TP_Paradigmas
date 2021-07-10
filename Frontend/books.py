@@ -4,6 +4,7 @@ from tkinter import messagebox #Sirve para mostrar mensajes
 import requests
 import json
 from ttkbootstrap import Style
+from tkinter import scrolledtext
 
 def mostrarDatos(objetoABuscar = {}): #Al ponerlo así el parámetro es opcional, es decir si en algún lado no se lo pasa no tira error y estará vacio 
     url = 'http://localhost:4000/api/v1/books'
@@ -18,22 +19,25 @@ def buscarYMostrarLibro():
     else: #Si se ingresa el título     
         limparPantalla()
         limpiarInputs()
+        editar["state"] = "disabled" #como limpio los input no hay nada para actualizar o borrar y habilito para que pueda dar de alta
+        borrar["state"] = "disabled"
+        agregar["state"] = "normal"
+
         book_in_json = findBookByTitle(title)
         tabla.insert('', 0, text = book_in_json['title'], values = (book_in_json['description'], book_in_json['price']) )
-        global botonVerTodos #Lo declaro global para que entre acá y la inicializo más arriba None para poder usarla en "traerTodosLosLibros()" para ocultar este botón    
-        botonVerTodos = Button(ventana,text = "Ver todos", command = traerTodosLosLibros, bg = "green", fg = "brown", bd=6, font="Verdana")
-        botonVerTodos.grid(row = 13, columnspan = 2, sticky = E, padx=10)
+        botonVerTodos["state"] = "normal"
+        editar["state"] = "disabled"
+        borrar["state"] = "disabled"
         return 0
 
 
 def traerTodosLosLibros():
     limpiarInputsBuscar()
+    limpiarInputs()
     textoInformativoEnBuscador()
     limparPantalla()
+    botonVerTodos["state"] = "disabled"
     mostrarDatos()
-    #Si no usaba una variable global no me dejaba ocultar el botón ya que lo creo en una función interna
-    global botonVerTodos #Lo declaro global y la inicializo más arriba None luego la cargo (en "buscarYMostrarLibro()" )con el botón para poder usarla acá para ocultar este botón
-    botonVerTodos.grid_forget() #grid_forget() oculta el boton, destroy() lo borra, también pack_forget() lo oculta pero debe usarse así "command=lambda: self.label.pack_forget()" (sin comillas) en los parámetros de un botón que lo active  
     return 0
     
 def limparPantalla():
@@ -145,67 +149,66 @@ def textoInformativoEnBuscador():
 def buscador():
     global buscarPorTitle, buscar
     #Buscar por title
-    Label(ventana, text = "buscar por título" ).grid(row = 1, sticky=W, padx=250, pady=5)
+    Label(ventana, text = "buscar por título", bg=color_ventana).pack(padx=250, pady=5)
     buscarPorTitle = Entry(ventana) #Va a estar en la ventana
     textoInformativoEnBuscador()
-    buscarPorTitle.grid(row=2, column=0, sticky=W, padx=10, pady=5, ipadx=190, ipady=5)
-    buscar = Button(ventana,text = "Buscar", command = buscarYMostrarLibro, bg = "blue", fg = "white", bd=2, font="Verdana") 
-    buscar.grid(row = 2, columnspan = 2, sticky=E, padx=10, pady=5)
+    buscarPorTitle.pack(ipadx=210, ipady=5)
+    buscar = ttk.Button(ventana, text="Buscar", style='primary.TButton', command = buscarYMostrarLibro).pack(pady=5)
 
 def tabla():
     global tabla
     tabla = ttk.Treeview(ventana, columns = ("#1", "#2")) #(Especifico el identificador de cada header [salvo el primero que se agrega solo]) Treeview es una tabla en forma de árbol pero la voy a usar comol tabla común (primer parámetro es dónde va a estar la tabla, el segundo parámetro es cantidad de columnas que quiero que tenga) 
-    tabla.grid(row = 5, column = 0, columnspan = 2) #Creo una grila en la fila 1, columna 0 y que abarque 2 columnas 
+    tabla.pack()  
     tabla.heading("#0",text = "Título", anchor = W)
     tabla.heading("#1",text = "Descripción", anchor = W)
     tabla.heading("#2",text = "Precio", anchor = W)
     tabla.bind("<Double-Button-1>", dobleClicTabla) #Cuando se da doble clic llama a la función, <Button-1> para 1 clic y <Double-Button-1> para doble clic, (con el 1 toma el botón izquierdo del mouse, <Button-2> el derecho y <Button-3> el scroll)
     #Hecho con doble clic ya que si lo hago con un clic, por ejemplo si tengo A y B, al hacer clic en A y luego clic en B toma el valor pero de A (es decir en el segundo clic tama el primero)... pidiendo doble clic para elegir, se evita esto
-
+    
 def inputs():
     global title, description, price
     #Título
     #title = crearInputAndLabel("Título", 9, 5, 5, 20, 8, 100, 5, 200, 4, "")
-    Label(ventana, text = "Título:").grid(row=9, columnspan=2 ,sticky=W, padx=10, pady=5)  
+    Label(ventana, text = "Título:", font=("Arial Black", 12), bg=color_ventana).pack()  
     title = Entry(ventana) #Va a estar en la ventana
-    title.grid(row=9, column=0, sticky=E, padx=10, pady=5, ipadx=200, ipady=5)
+    title.pack(ipadx=210, ipady=5)
     title.focus() #Para que cuando inicie la ventana el cursor esté en este campo de texto
 
     #Descripción
     #description = crearInputAndLabel("Descripción", 9, 5, 5, 20, 8, 100, 5, 200, 10, "texto")
-    Label(ventana, text = "Descripción:").grid(row=10, columnspan=2 ,sticky=W, padx=10, pady=5)  
-    description = Text(ventana, width=15, height=4) 
-    description.grid(row=10, column=0, sticky=E, padx=10, pady=5, ipadx=200, ipady=5)
+    Label(ventana, text = "Descripción:", font=("Arial Black", 12), bg=color_ventana).pack()  
+    description = Text(ventana, width=15, height=3) 
+    description.pack(ipadx=225, ipady=5)
 
     #Precio
     #price = crearInputAndLabel("Precio", 10, 20, 5, 20, 8, 100, 5, 70, 4, "")
-    Label(ventana, text = "Precio:").grid(row=11, columnspan=2 ,sticky=W, padx=10, pady=5)  
+    Label(ventana, text = "Precio:", font=("Arial Black", 12), bg=color_ventana).pack()  
     price = Entry(ventana) 
-    price.grid(row=11, column=0, sticky=W, padx=90, pady=5, ipadx=70, ipady=5)
+    price.pack(ipadx=70, ipady=5)
 
 def botonesABM():
     global agregar, editar, borrar
     #Botón agregar
-    agregar = Button(ventana,text = "Agregar", command = agregarLibro, bg = "green", fg = "white", bd=2, font="Verdana") #Command llama a la función al tocar el botón, bg es el fondo, fg la letra 
-    agregar.grid(row = 13, column=0, sticky=W, padx= 180, pady=5)   
-
-    #Botón editar 
-    editar = Button(ventana,text = "Editar", command = editarLibro, bg = "yellow", bd=2, font="Verdana") 
-    editar.grid(row = 13, column=0, sticky=W, padx= 280, pady=5) 
+    agregar = ttk.Button(ventana, text="Guardar", style='success.Outline.TButton',  command = agregarLibro)
+    #agregar = ttk.Button(ventana, text="Guardar", style='success.TButton',  command = agregarLibro)
+    agregar.pack(side='left', padx=100, pady=10)
+    #Botón editar
+    editar = ttk.Button(ventana, text="Editar", style='warning.Outline.TButton',  command = agregarLibro)
+    #editar = ttk.Button(ventana, text="Editar", style='warning.TButton',  command = agregarLibro)
+    editar.pack(side='left', padx=0, pady=10)
     editar["state"] = "disabled" #El botón arranca en estado disabled
-
     #Botón borrar 
-    borrar = Button(ventana,text = "Borrar", command = borrarLibro, bg = "red", fg = "white", bd=2, font="Verdana") 
-    borrar.grid(row = 13, columnspan = 2, sticky=E, padx= 180, pady=5)
+    borrar = ttk.Button(ventana, text="Borrar", style='danger.Outline.TButton', command = borrarLibro)
+    #borrar = ttk.Button(ventana, text="Borrar", style='danger.TButton', command = borrarLibro)
+    borrar.pack(side='left', padx=100, pady=10)
     borrar["state"] = "disabled" #El botón arranca en estado disabled
 
-def mensajes_y_espacios():
-    Label(ventana, text = "" ).grid(row = 3)
-    Label(ventana, text = "Con doble clic selecione uno de la lista para realizar las aciones que indican los botones inferiores." ).grid(row = 4, column=0, sticky=W+E, pady=5)
-    Label(ventana, text = "" ).grid(row = 6)
-    Label(ventana, text = "Para registrar un libro llene los campos, luego pulse el botón \"Agregar\"" ).grid(row = 7, column=0, sticky=W+E)
-    Label(ventana, text = "Para editar o borar, selecione uno de la lista, luego pulse el botón correspondiente" ).grid(row = 8, column=0, sticky=W+E)
-    Label(ventana, text = "" ).grid(row = 12)
+def crear_botonVerTodos():
+    #Botón ver todos
+    global botonVerTodos 
+    botonVerTodos = ttk.Button(ventana, text="Recargar todos", style='success.Outline.TButton', command=traerTodosLosLibros)
+    botonVerTodos.pack(pady=5)
+    botonVerTodos["state"] = "disabled" #El botón arranca en estado disabled
 
 # Evento de cierre de interfaz
 def close_window():
@@ -214,25 +217,31 @@ def close_window():
 
 
 def main_books():
-    global ventana
+    global ventana, color_ventana
     style = Style()    
     ventana = style.master #Creo una ventana
+    color_ventana = "#d3eaf2" 
     #ventana.geometry("900x520")  # tamaño de la ventana: en este caso no me sirve darle tamaño fijo ya que se agregan o se esconde un botón 
     # anula la opción de máximizar y de cambiar el tamaño arrastrando con el puntero del mouse
     ventana.resizable(width=0, height=0)
-    #ventana.configure(background="lawn green")  # fondo de color sólido
+    ventana.configure(background=color_ventana)  # fondo de color sólido
     ventana.title("ABM de Libros")  # título
     # ventana.iconbitmap("/Icono.ico")  # ícono
     # si se preciona la "X" para cerrar la app, llamo a close_window que pide confirmar
     ventana.protocol("WM_DELETE_WINDOW", close_window)
-
-    buscador()
-    mensajes_y_espacios()
+    buscador()    
+    Label(ventana, text = "", bg=color_ventana).pack()
+    Label(ventana, text = "Con doble clic selecione uno de la lista para realizar las aciones que indican los botones inferiores.", font=("Arial Narrow", 12), bg=color_ventana).pack()
     tabla()
+    crear_botonVerTodos()
+    Label(ventana, text = "", bg=color_ventana).pack()
+    Label(ventana, text = "Para registrar un libro llene los campos, luego pulse el botón \"Agregar\"", font=("Calibri Cuerpo", 10), bg=color_ventana).pack()
+    Label(ventana, text = "Para editar o borar, selecione uno de la lista, luego pulse el botón correspondiente", font=("Calibri Cuerpo", 10), bg=color_ventana).pack()
     inputs()
-    botonesABM()
-
+    Label(ventana, text = "", bg=color_ventana).pack()
+    botonesABM() 
     mostrarDatos()
+
     ventana.mainloop() #Ciclo principal
 
 main_books()
