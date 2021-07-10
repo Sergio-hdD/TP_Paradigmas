@@ -13,7 +13,7 @@ def mostrarDatos(objetoABuscar = {}): #Al ponerlo así el parámetro es opcional
         tabla.insert('', 0, text = book['title'], values = (book['description'], book['price']) )
 
 def buscarYMostrarLibro():
-    title = buscarPorTitle.get() 
+    title = buscarPorTitle.get().title()
     if len(title) == 0 :
         messagebox.showerror(message = "Debe ingresar el título para realizar la búsqueda")
     else: #Si se ingresa el título     
@@ -24,7 +24,8 @@ def buscarYMostrarLibro():
         agregar["state"] = "normal"
 
         book_in_json = findBookByTitle(title)
-        tabla.insert('', 0, text = book_in_json['title'], values = (book_in_json['description'], book_in_json['price']) )
+        if(book_in_json):
+            tabla.insert('', 0, text = book_in_json['title'], values = (book_in_json['description'], book_in_json['price']) )
         botonVerTodos["state"] = "normal"
         editar["state"] = "disabled"
         borrar["state"] = "disabled"
@@ -87,7 +88,7 @@ def editarLibro():
     global title__a_buscar #Lo declaro global para que entre acá y la inicializo más arriba como string vacío para poder usarla en otros lados
     if len(title.get()) != 0 and len(description.get("1.0","end")) != 0 and len(price.get()) != 0 : #Si se cargaron todos los campos
         try:
-            update_book(findBookByTitle(title__a_buscar)['id'])
+            update_book(findBookByTitle(title__a_buscar)['id']) 
             limpiarInputs()
         except: #Si no se puede conectar
             print("Algo falló al intentar actualizar ")
@@ -129,11 +130,11 @@ def delete_book_by_id(var_id):
 
 def update_book(var_id):
     url = 'http://localhost:4000/api/v1/books/'+str(var_id)
-    return requests.put(url, json={'title': title.get(), 'description': description.get("1.0","end"), 'price' : price.get()}).json()
+    return requests.put(url, json={'title': title.get().title(), 'description': description.get("1.0","end"), 'price' : price.get()}).json()
 
 def aggregate_book():
     url = 'http://localhost:4000/api/v1/books'
-    response = requests.post(url, json={'title': title.get(), 'description': description.get("1.0","end"), 'price' : price.get()}) 
+    response = requests.post(url, json={'title': title.get().title(), 'description': description.get("1.0","end"), 'price' : price.get()}) 
     
     if 'error' in response.json(): 
         Label(ventana, text=response.json()['error'], fg="red", font=("calibri", 11)).pack()
@@ -149,7 +150,7 @@ def textoInformativoEnBuscador():
 def buscador():
     global buscarPorTitle, buscar
     #Buscar por title
-    Label(ventana, text = "buscar por título", bg=color_ventana).pack(padx=250, pady=5)
+    Label(ventana, text = "Buscar por título completo", bg=color_ventana).pack(padx=250, pady=5)
     buscarPorTitle = Entry(ventana) #Va a estar en la ventana
     textoInformativoEnBuscador()
     buscarPorTitle.pack(ipadx=210, ipady=5)
@@ -193,8 +194,8 @@ def botonesABM():
     #agregar = ttk.Button(ventana, text="Guardar", style='success.TButton',  command = agregarLibro)
     agregar.pack(side='left', padx=100, pady=10)
     #Botón editar
-    editar = ttk.Button(ventana, text="Editar", style='warning.Outline.TButton',  command = agregarLibro)
-    #editar = ttk.Button(ventana, text="Editar", style='warning.TButton',  command = agregarLibro)
+    editar = ttk.Button(ventana, text="Editar", style='warning.Outline.TButton',  command = editarLibro)
+    #editar = ttk.Button(ventana, text="Editar", style='warning.TButton',  command = editarLibro)
     editar.pack(side='left', padx=0, pady=10)
     editar["state"] = "disabled" #El botón arranca en estado disabled
     #Botón borrar 

@@ -202,6 +202,18 @@ def delete_user(id):
 
     return user_schema.jsonify(user)
 
+#check a user name and password
+@app.route("/api/v1/users/check/<name_input>/<password_input>", methods=['GET'])
+def getUserByNameAndPassword(name_input, password_input):
+    user = User.query.filter_by(name=name_input, password=password_input).first()
+    return book_schema.jsonify(user)
+
+#check a user name
+@app.route("/api/v1/users/check/<name_input>", methods=['GET'])
+def getUserByName(name_input):
+    user = User.query.filter_by(name=name_input).first()
+    return book_schema.jsonify(user)
+
 
 # Run server
 if __name__ == "__main__":
