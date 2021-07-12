@@ -5,7 +5,7 @@ from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
 CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:ser.23@localhost/api-python'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/api-python'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -118,15 +118,18 @@ def delete_book(id):
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
+    email = db.Column(db.String(50))
     password = db.Column(db.String(100))
 
-    def __init__(self, id, name, password):
+    def __init__(self, id, email, name, password):
         self.id = id
         self.name = name
+        self.email = email
         self.password = password
 
-    def __init__(self, name, password):
+    def __init__(self, name, email, password):
         self.name = name
+        self.email = email
         self.password = password
 
     def __str__(self):
@@ -138,7 +141,7 @@ db.create_all()
 
 class UserSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'name', 'password')
+        fields = ('id', 'name', 'email', 'password')
 
 
 user_schema = UserSchema()
@@ -151,6 +154,7 @@ def create_user():
     data = request.get_json()
 
     name = data['name']
+    email = data['email']
     password = data['password']
 
     new_user = User(name, password)
@@ -186,6 +190,7 @@ def update_user(id):
     data = request.get_json()
 
     user.name = data['name']
+    user.email = data['email']
     user.password = data['password']
 
     db.session.commit()
