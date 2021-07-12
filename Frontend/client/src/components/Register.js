@@ -2,7 +2,7 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import Link from '@material-ui/core/Link';
+import { Link } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
@@ -38,7 +38,7 @@ const Register = () => {
             backgroundPosition: 'center',
         },
         paper: {
-            margin: theme.spacing(8, 4),
+            margin: theme.spacing(7, 4),
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -48,7 +48,7 @@ const Register = () => {
             backgroundColor: theme.palette.secondary.main,
         },
         form: {
-            width: '100%', // Fix IE 11 issue.
+            width: '100%',
             marginTop: theme.spacing(1),
         },
         submit: {
@@ -71,6 +71,17 @@ const Register = () => {
                         Register
                     </Typography>
                     <form className={classes.form} noValidate>
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="username"
+                            label="Username"
+                            name="username"
+                            autoComplete="username"
+                            autoFocus
+                        />
                         <TextField
                             variant="outlined"
                             margin="normal"
@@ -104,7 +115,7 @@ const Register = () => {
                         </Button>
                         <Grid container>
                             <Grid item>
-                                <Link href="#" variant="body2">
+                                <Link to="/login" variant="body2">
                                     {"Don't have an account? Login"}
                                 </Link>
                             </Grid>
