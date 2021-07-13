@@ -6,9 +6,23 @@ export const DataContext = createContext()
 
 export const DataProvider = ({ children }) => {
 
-    const initialState = { auth: {}, books: [] }
+    const initialState = { notify: { show: false }, auth: {}, modal: [{ show: false }], books: [], cart: [] }
 
     const [state, dispatch] = useReducer(reducers, initialState)
+
+    const { cart } = state
+
+    useEffect(() => {
+        const __books__cart01 = JSON.parse(localStorage.getItem('__books__cart01'))
+
+        if (__books__cart01) dispatch({ type: 'ADD_CART', payload: __books__cart01 })
+    }, [])
+
+    useEffect(() => {
+        localStorage.setItem('__books__cart01', JSON.stringify(cart))
+    }, [cart])
+
+
     /*
     useEffect(() => {
 

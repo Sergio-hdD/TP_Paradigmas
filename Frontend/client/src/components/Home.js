@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from 'react';
+import { useContext } from 'react';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -12,23 +12,20 @@ import Container from '@material-ui/core/Container';
 import { Link } from 'react-router-dom'
 import Navbar from './Navbar';
 import { DataContext } from '../store/GlobalState'
-import SnackarCustom from './SnackarCustom'
-
+import Notify from './Notify';
+import { addToCart } from '../store/Actions'
 
 const Home = () => {
 
-    const { state } = useContext(DataContext)
+    const { state, dispatch } = useContext(DataContext)
 
-    const { books }  = state
+    const { books, cart } = state
 
     function Copyright() {
         return (
             <Typography variant="body2" color="textSecondary" align="center">
                 {'Copyright © '}
-                <Link color="inherit" href="https://material-ui.com/">
-                    Your Website
-                </Link>{' '}
-                {new Date().getFullYear()}
+                Your Website {new Date().getFullYear()}
                 {'.'}
             </Typography>
         );
@@ -71,8 +68,8 @@ const Home = () => {
     return (
         <>
             <CssBaseline />
-            <Navbar/>
-            <SnackarCustom/>
+            <Navbar />
+            <Notify />
             <main>
                 {/* Hero unit */}
                 <div className={classes.heroContent}>
@@ -124,8 +121,9 @@ const Home = () => {
                                         <Button size="small" color="primary" component={Link} to={`/book/${book.id}`}>
                                             View
                                         </Button>
-                                        <Button size="small" color="primary">
-                                            Edit
+                                        <Button size="small" color="primary"
+                                            onClick={() => dispatch(addToCart(book, cart))}>
+                                            Buy
                                         </Button>
                                     </CardActions>
                                 </Card>
