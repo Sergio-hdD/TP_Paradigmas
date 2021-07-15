@@ -1,3 +1,5 @@
+import { useContext, useState } from 'react';
+import { DataContext } from '../../store/GlobalState'
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -9,8 +11,41 @@ import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
+import { validRegister } from '../../utils/valid';
+import { postData } from '../../utils/fetchData';
 
 const Register = () => {
+
+    const { state, dispatch } = useContext(DataContext)
+
+    const [user, setUser] = useState({
+        username: '',
+        email: '',
+        password: '',
+        cf_password: ''
+    })
+
+    const handleChangeInput = e => {
+        const { name, value } = e.target
+        setUser({ ...user, [name]: value })
+    }
+
+    const handleSubmit = async e => {
+        e.preventDefault()
+
+        const errorMsg = validRegister(user.username, user.email, user.password, user.cf_password);
+
+        if (errorMsg) {
+            return dispatch({ type: 'NOTIFY', payload: { error: errorMsg, show: true } })
+        }
+        
+        const res = await postData('users/register', user)
+
+        if (res.err) return dispatch({ type: 'NOTIFY', payload: { error: res.err, show: true } }) 
+
+        dispatch({ type: 'NOTIFY', payload: { success: res.msg, show: true } })
+
+    }
 
     function Copyright() {
         return (
@@ -70,40 +105,58 @@ const Register = () => {
                     <Typography component="h1" variant="h5">
                         Register
                     </Typography>
-                    <form className={classes.form} noValidate>
+                    <form className={classes.form} onSubmit={handleSubmit}>
                         <TextField
                             variant="outlined"
                             margin="normal"
-                            required
                             fullWidth
                             id="username"
                             label="Username"
                             name="username"
                             autoComplete="username"
                             autoFocus
+                            onChange={handleChangeInput}
+                            value={user.username}
                         />
                         <TextField
                             variant="outlined"
                             margin="normal"
-                            required
                             fullWidth
                             id="email"
                             label="Email Address"
                             name="email"
                             autoComplete="email"
                             autoFocus
+                            onChange={handleChangeInput}
+                            value={user.email}
                         />
-                        <TextField
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            fullWidth
-                            name="password"
-                            label="Password"
-                            type="password"
-                            id="password"
-                            autoComplete="current-password"
-                        />
+
+                        <Grid container justifyContent="space-between">
+                            <TextField
+                                variant="outlined"
+                                margin="normal"
+                                name="password"
+                                label="Password"
+                                type="password"
+                                id="password"
+                                autoComplete="current-password"
+                                onChange={handleChangeInput}
+                                value={user.password}
+                            />
+                            <TextField
+                                variant="outlined"
+                                margin="normal"
+                                name="cf_password"
+                                label="Confirm Password"
+                                type="password"
+                                id="password"
+                                autoComplete="current-password"
+                                onChange={handleChangeInput}
+                                value={user.cf_password}
+                            />
+
+                        </Grid>
+
                         <Button
                             type="submit"
                             fullWidth

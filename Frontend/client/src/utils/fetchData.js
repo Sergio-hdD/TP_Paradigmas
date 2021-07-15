@@ -15,11 +15,11 @@ export const getData = async (url, token) => {
 
 export const postData = async (url, post, token) => {
 
-    const res = await fetch(`${baseURL}/api/${url}`, {
+    const res = await fetch(`${baseURL}/${url}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': token
+            'Authorization': `JWT ${token}`
         },
         body: JSON.stringify(post)
     })

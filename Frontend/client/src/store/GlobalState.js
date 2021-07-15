@@ -1,6 +1,6 @@
 import { createContext, useEffect, useReducer } from 'react'
 import reducers from './Reducers'
-import { getData } from '../utils/fetchData'
+import { getData, postData } from '../utils/fetchData'
 
 export const DataContext = createContext()
 
@@ -12,6 +12,33 @@ export const DataProvider = ({ children }) => {
 
     const { cart } = state
 
+
+    useEffect(() => {
+
+        const token = localStorage.getItem('token');
+
+        console.log(token)
+
+        if (token) {
+
+            getData('users', token).then(res => {
+                if (res.error) return localStorage.removeItem('firstLogin')
+
+                console.log( "asdfsdfsdf    " + res)
+    
+                dispatch({
+                    type: "AUTH",
+                    payload: {
+                        token: res.access_token,
+                        user: res.user
+                    }
+                })
+    
+            })
+        }
+
+    })
+
     useEffect(() => {
         const __books__cart01 = JSON.parse(localStorage.getItem('__books__cart01'))
 
@@ -22,44 +49,7 @@ export const DataProvider = ({ children }) => {
         localStorage.setItem('__books__cart01', JSON.stringify(cart))
     }, [cart])
 
-
-    /*
-    useEffect(() => {
-
-        const getToken = async () => {
-            
-            const token = localStorage.getItem('tokenStore');
-
-            if (token) {
-
-                const verified = await axios.get('/users/verify', {
-                    headers: {
-                        Authorization: token
-                    }
-                })
-
-                if (verified) {
-                    dispatch({
-                        type: "AUTH",
-                        payload: {
-                            user: {
-                                username: verified.data.user.username,
-                                token
-                            }
-                        }
-                    })
-                } else {
-                    localStorage.clear()
-                }
-            }
-        }
-
-        getToken()
-
-    }, [])
-
-    */
-
+    
     useEffect(() => {
 
         getData('books').then(res => {

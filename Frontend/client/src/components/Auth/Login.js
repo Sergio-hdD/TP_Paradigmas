@@ -1,3 +1,5 @@
+import { useContext, useState } from 'react';
+import { DataContext } from '../../store/GlobalState'
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -9,8 +11,46 @@ import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
+import { validLogin } from '../../utils/valid';
+import { postData } from '../../utils/fetchData';
 
 const Login = () => {
+
+    const { state, dispatch } = useContext(DataContext)
+
+    const [user, setUser] = useState({
+        email: '',
+        password: ''
+    })
+
+    const handleChangeInput = e => {
+        const { name, value } = e.target
+        setUser({ ...user, [name]: value })
+    }
+
+    const handleSubmit = async e => {
+        e.preventDefault()
+
+        const errorMsg = validLogin(user.email, user.password);
+
+        if (errorMsg) return dispatch({ type: 'NOTIFY', payload: { error: errorMsg, show: true } })
+
+        const res = await postData('users/auth', user)
+
+        if (res.error) return dispatch({ type: 'NOTIFY', payload: { error: res.description, show: true } })
+
+        dispatch({
+            type: 'AUTH', payload: {
+                token: res.access_token,
+                user: res.user
+            }
+        })
+
+        localStorage.setItem('token', res.access_token)
+
+        return dispatch({ type: 'NOTIFY', payload: { success: 'logged Successfully', show: true } })
+
+    }
 
     function Copyright() {
         return (
@@ -70,28 +110,30 @@ const Login = () => {
                     <Typography component="h1" variant="h5">
                         Login
                     </Typography>
-                    <form className={classes.form} noValidate>
+                    <form className={classes.form} onSubmit={handleSubmit}>
                         <TextField
                             variant="outlined"
                             margin="normal"
-                            required
                             fullWidth
                             id="email"
                             label="Email Address"
                             name="email"
                             autoComplete="email"
                             autoFocus
+                            value={user.email}
+                            onChange={handleChangeInput}
                         />
                         <TextField
                             variant="outlined"
                             margin="normal"
-                            required
                             fullWidth
                             name="password"
                             label="Password"
                             type="password"
                             id="password"
                             autoComplete="current-password"
+                            value={user.password}
+                            onChange={handleChangeInput}
                         />
                         <Button
                             type="submit"
