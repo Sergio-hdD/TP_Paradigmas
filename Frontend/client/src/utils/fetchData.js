@@ -29,7 +29,7 @@ export const postData = async (url, post, token) => {
 }
 
 export const putData = async (url, post, token) => {
-    const res = await fetch(`${baseURL}/api/${url}`, {
+    const res = await fetch(`${baseURL}/${url}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -59,7 +59,7 @@ export const patchData = async (url, post, token) => {
 }
 
 export const deleteData = async (url, token) => {
-    const res = await fetch(`${baseURL}/api/${url}`, {
+    const res = await fetch(`${baseURL}/${url}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',

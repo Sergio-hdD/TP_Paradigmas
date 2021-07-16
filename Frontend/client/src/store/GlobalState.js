@@ -6,25 +6,20 @@ export const DataContext = createContext()
 
 export const DataProvider = ({ children }) => {
 
-    const initialState = { notify: { show: false }, auth: {}, modal: [{ show: false }], books: [], cart: [] }
+    const initialState = { notify: { show: false }, auth: { user: { name : 'Franco', email: 'FrancoAguirre644@gmail.com', isAdmin: true } }, modal: [{ show: false }], books: [], cart: [] }
 
     const [state, dispatch] = useReducer(reducers, initialState)
 
     const { cart } = state
 
-
     useEffect(() => {
 
         const token = localStorage.getItem('token');
-
-        console.log(token)
-
+        /*
         if (token) {
 
             getData('users', token).then(res => {
                 if (res.error) return localStorage.removeItem('firstLogin')
-
-                console.log( "asdfsdfsdf    " + res)
     
                 dispatch({
                     type: "AUTH",
@@ -35,7 +30,7 @@ export const DataProvider = ({ children }) => {
                 })
     
             })
-        }
+        } */
 
     })
 

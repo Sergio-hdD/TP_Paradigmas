@@ -41,12 +41,10 @@ class Book(db.Model):
         self.fechaEntrega = fechaEntrega
         self.inStock
 
-    def __init__(self, title, description, price, fechaSolicitud, fechaEntrega, inStock):
+    def __init__(self, title, description, price, inStock):
         self.title = title
         self.description = description
         self.price = price
-        self.fechaSolicitud = fechaSolicitud
-        self.fechaEntrega = fechaEntrega
         self.inStock
 
     def __str__(self):
@@ -71,19 +69,20 @@ books_schema = BookSchema(many=True)
 def create_book():
     data = request.get_json()
 
-    title = data['title']
-    description = data['description']
-    price = data['price']
-    fechaSolicitud = data['fechaSolicitud']
-    fechaEntrega = data['fechaEntrega']
-    inStock = data['inStock']
+    title = request.json.get('title')
+    description = request.json.get('description')
+    price = request.json.get('price')
+    inStock = request.json.get('inStock')
+
+    if Book.query.filter_by(title=title).first():
+        return jsonify({'err': 'The book is already added.'})
     
-    new_book = Book(title, description, price, fechaSolicitud, fechaEntrega, inStock)
+    new_book = Book(title, description, price, inStock)
 
     db.session.add(new_book)
     db.session.commit()
 
-    return book_schema.jsonify(new_book)
+    return jsonify({'msg': 'Book Created Successfully.'})
 
 
 # Get all books
@@ -121,14 +120,12 @@ def update_book(id):
 
     book.title = data['title']
     book.description = data['description']
-    book.price = data['price']
-    book.fechaSolicitud = data['fechaSolicitud']
-    book.fechaEntrega = data['fechaEntrega']
+    book.price = data['price'] 
     book.inStock = data['inStock']
 
     db.session.commit()
 
-    return book_schema.jsonify(book)
+    return jsonify({'msg': 'Book Updated Successfully.'})
 
 
 # Delete a book
@@ -138,7 +135,7 @@ def delete_book(id):
     db.session.delete(book)
     db.session.commit()
 
-    return book_schema.jsonify(book)
+    return jsonify({'msg': 'Book deleted Successfully.'})
 
 #USER
 class User(db.Model):

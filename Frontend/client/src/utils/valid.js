@@ -19,6 +19,7 @@ export const validRegister = (name, email, password, cf_password) => {
 }
 
 export const validLogin = (email, password) => {
+
     if (!email || !password) {
         return 'Please add all fields.'
     }
@@ -26,6 +27,18 @@ export const validLogin = (email, password) => {
     if (!validateEmail(email)) {
         return 'Invalid email.'
     }
+
+}
+
+export const validBook = (title, description, price, inStock) => {
+    
+    if (!title || !description || !price || !inStock) {
+        return 'Please add all fields.'
+    }
+
+    if (price <= 0)  return 'The price must be greater than 0.'
+
+    if(inStock <= 0 ) return 'The stock must be greater than 0'
 
 }
 

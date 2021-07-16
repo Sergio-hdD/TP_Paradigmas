@@ -62,48 +62,47 @@ const Book = ({ match }) => {
 
     const classes = useStyles();
 
+    if(!book.title) return null;
+
     return (
-        <>
-            <Navbar />
-            <div className={classes.root}>
-                <Paper className={classes.paper}>
-                    <Grid container spacing={2}>
-                        <Grid item>
-                            <ButtonBase className={classes.image}>
-                                <img className={classes.img} alt="complex" src="https://static01.nyt.com/images/2020/11/03/obituaries/25maradona-ES-1/00Maradona-mediumSquareAt3X.jpg" />
-                            </ButtonBase>
-                        </Grid>
-                        <Grid item xs={12} sm container>
-                            <Grid item xs container direction="column" spacing={2}>
-                                <Grid item xs>
-                                    <Typography gutterBottom variant="subtitle1">
-                                        {book.title}
-                                    </Typography>
-                                    <Typography variant="body2" gutterBottom>
-                                        {book.description}
-                                        {book.description}
-                                    </Typography>
-                                    <Typography variant="body2" color="textSecondary">
-                                        In Stock
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography variant="body2" style={{ cursor: 'pointer' }}>
-                                        <Button variant="contained" color="secondary" disabled={book.inStock === 0 ? true : false}
-                                            onClick={() => dispatch(addToCart(book, cart))}>
-                                            Add to cart
-                                        </Button>
-                                    </Typography>
-                                </Grid>
+        <div className={classes.root}>
+            <Paper className={classes.paper}>
+                <Grid container spacing={2}>
+                    <Grid item>
+                        <ButtonBase className={classes.image}>
+                            <img className={classes.img} alt="complex" src="https://static01.nyt.com/images/2020/11/03/obituaries/25maradona-ES-1/00Maradona-mediumSquareAt3X.jpg" />
+                        </ButtonBase>
+                    </Grid>
+                    <Grid item xs={12} sm container>
+                        <Grid item xs container direction="column" spacing={2}>
+                            <Grid item xs>
+                                <Typography gutterBottom variant="subtitle1">
+                                    {book.title}
+                                </Typography>
+                                <Typography variant="body2" gutterBottom>
+                                    {book.description}
+                                    {book.description}
+                                </Typography>
+                                <Typography variant="body2" color="textSecondary">
+                                    In Stock
+                                </Typography>
                             </Grid>
                             <Grid item>
-                                <Typography variant="subtitle1">${book.price}</Typography>
+                                <Typography variant="body2" style={{ cursor: 'pointer' }}>
+                                    <Button variant="contained" color="secondary" disabled={book.inStock === 0 ? true : false}
+                                        onClick={() => dispatch(addToCart(book, cart))}>
+                                        Add to cart
+                                    </Button>
+                                </Typography>
                             </Grid>
                         </Grid>
+                        <Grid item>
+                            <Typography variant="subtitle1">${book.price}</Typography>
+                        </Grid>
                     </Grid>
-                </Paper>
-            </div>
-        </>
+                </Grid>
+            </Paper>
+        </div>
     );
 
 }

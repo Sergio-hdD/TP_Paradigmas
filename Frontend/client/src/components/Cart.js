@@ -59,116 +59,110 @@ const Cart = () => {
 
     if (cart.length === 0) {
         return (
-            <>
-                <Navbar />
-                <div className={classes.root} >
-                    <Grid container spacing={2} >
-                        <Grid item xs={12} md={12}>
-                            <Typography variant="h5" className={classes.title}>
-                                <ShoppingCart style={{ fontSize: 180 }} />
-                            </Typography>
-                            <Typography variant="h5" className={classes.title}>
-                                Your Shopping cart is empty
-                            </Typography>
-                            <Typography variant="subtitle1" className={classes.title}>
-                                Looks like you haven't made your choice yet...
-                            </Typography>
-                            <Box className={classes.title}>
-                                <Button variant="outlined" color="primary" component={Link} to="/">
-                                    Continue Shopping
-                                </Button>
-                            </Box>
-                        </Grid>
+            <div className={classes.root} >
+                <Grid container spacing={2} >
+                    <Grid item xs={12} md={12}>
+                        <Typography variant="h5" className={classes.title}>
+                            <ShoppingCart style={{ fontSize: 180 }} />
+                        </Typography>
+                        <Typography variant="h5" className={classes.title}>
+                            Your Shopping cart is empty
+                        </Typography>
+                        <Typography variant="subtitle1" className={classes.title}>
+                            Looks like you haven't made your choice yet...
+                        </Typography>
+                        <Box className={classes.title}>
+                            <Button variant="outlined" color="primary" component={Link} to="/">
+                                Continue Shopping
+                            </Button>
+                        </Box>
                     </Grid>
-                </div>
-            </>
+                </Grid>
+            </div>
         )
     }
 
     return (
-        <>
 
-            <Navbar />
-            <div className={classes.root} >
-                <Grid container spacing={2} >
-                    <Grid item xs={12} md={7}>
-                        <Typography variant="h5" className={classes.title}>
-                            Cart
-                        </Typography>
-                        <div className={classes.demo}>
-                            {
-                                cart.map((book) => (
+        <div className={classes.root} >
+            <Grid container spacing={2} >
+                <Grid item xs={12} md={7}>
+                    <Typography variant="h5" className={classes.title}>
+                        Cart
+                    </Typography>
+                    <div className={classes.demo}>
+                        {
+                            cart.map((book) => (
 
-                                    <List key={book.id}>
-                                        <ListItem>
-                                            <ListItemAvatar>
-                                                <Avatar>
-                                                    <BookIcon />
-                                                </Avatar>
-                                            </ListItemAvatar>
-                                            <ListItemText
-                                                primary={book.title}
-                                                secondary={`$ ${book.price}`}
-                                            />
-                                            <ListItemSecondaryAction>
-                                                <IconButton edge="end" aria-label="delete" color="secondary"
-                                                    onClick={() => dispatch({
-                                                        type: 'ADD_MODAL',
-                                                        payload: [{ data: cart, id: book.id, title: book.title, show: true, type: 'ADD_CART' }]
-                                                    })}>
-                                                    <DeleteIcon />
-                                                </IconButton>
-                                            </ListItemSecondaryAction>
-                                        </ListItem>
-                                        <Divider />
-                                    </List>
-                                ))
-                            }
+                                <List key={book.id}>
+                                    <ListItem>
+                                        <ListItemAvatar>
+                                            <Avatar>
+                                                <BookIcon />
+                                            </Avatar>
+                                        </ListItemAvatar>
+                                        <ListItemText
+                                            primary={book.title}
+                                            secondary={`$ ${book.price}`}
+                                        />
+                                        <ListItemSecondaryAction>
+                                            <IconButton edge="end" aria-label="delete" color="secondary"
+                                                onClick={() => dispatch({
+                                                    type: 'ADD_MODAL',
+                                                    payload: [{ data: cart, id: book.id, title: book.title, show: true, type: 'ADD_CART' }]
+                                                })}>
+                                                <DeleteIcon />
+                                            </IconButton>
+                                        </ListItemSecondaryAction>
+                                    </ListItem>
+                                    <Divider />
+                                </List>
+                            ))
+                        }
 
-                        </div>
-                    </Grid>
-                    <Grid item xs={12} md={5}>
-                        <div className={classes.demo}>
-                            <form>
-                                <Typography variant="h5" className={classes.title}>
-                                    Shipping
-                                </Typography>
-                                <TextField
-                                    variant="outlined"
-                                    margin="normal"
-                                    required
-                                    fullWidth
-                                    id="address"
-                                    label="Address"
-                                    name="address"
-                                    autoComplete="address"
-                                    autoFocus
-                                />
-
-                                <TextField
-                                    variant="outlined"
-                                    margin="normal"
-                                    required
-                                    fullWidth
-                                    id="mobile"
-                                    label="Mobile"
-                                    name="mobile"
-                                    autoComplete="mobile"
-                                    autoFocus
-                                />
-                            </form>
-
-                            <h3>Total: <span>${total}</span></h3>
-
-                            <Button variant="contained" color="primary" component={Link} to={auth.user ? "#" : "/signin"}>
-                                Proceed with payment
-                            </Button>
-
-                        </div>
-                    </Grid>
+                    </div>
                 </Grid>
-            </div>
-        </>
+                <Grid item xs={12} md={5}>
+                    <div className={classes.demo}>
+                        <form>
+                            <Typography variant="h5" className={classes.title}>
+                                Shipping
+                            </Typography>
+                            <TextField
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="address"
+                                label="Address"
+                                name="address"
+                                autoComplete="address"
+                                autoFocus
+                            />
+
+                            <TextField
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="mobile"
+                                label="Mobile"
+                                name="mobile"
+                                autoComplete="mobile"
+                                autoFocus
+                            />
+                        </form>
+
+                        <h3>Total: <span>${total}</span></h3>
+
+                        <Button variant="contained" color="primary" component={Link} to={auth.user ? "#" : "/signin"}>
+                            Proceed with payment
+                        </Button>
+
+                    </div>
+                </Grid>
+            </Grid>
+        </div>
 
     );
 }

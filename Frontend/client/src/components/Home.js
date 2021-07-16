@@ -19,7 +19,7 @@ const Home = () => {
 
     const { state, dispatch } = useContext(DataContext)
 
-    const { books, cart } = state
+    const { books, cart, auth } = state
 
     function Copyright() {
         return (
@@ -68,7 +68,6 @@ const Home = () => {
     return (
         <>
             <CssBaseline />
-            <Navbar />
             <Notify />
             <main>
                 {/* Hero unit */}
@@ -118,13 +117,37 @@ const Home = () => {
                                         </Typography>
                                     </CardContent>
                                     <CardActions>
-                                        <Button size="small" color="primary" component={Link} to={`/book/${book.id}`}>
-                                            View
-                                        </Button>
-                                        <Button size="small" color="primary"
-                                            onClick={() => dispatch(addToCart(book, cart))}>
-                                            Buy
-                                        </Button>
+                                        {
+                                            auth && !auth.user.isAdmin && (
+                                                <div>
+                                                    <Button size="small" color="primary" component={Link} to={`/book/${book.id}`}>
+                                                        View
+                                                    </Button>
+                                                    <Button size="small" color="primary"
+                                                        onClick={() => dispatch(addToCart(book, cart))}>
+                                                        Buy
+                                                    </Button>
+                                                </div>
+                                            )
+                                        }
+
+                                        {
+                                            auth.user && auth.user.isAdmin && (
+                                                <div>
+                                                    <Button size="small" color="secondary" component={Link} to={`/books/edit/${book.id}`}>
+                                                        Edit
+                                                    </Button>
+                                                    <Button size="small" color="secondary"
+                                                    onClick={() => dispatch({
+                                                        type: 'ADD_MODAL',
+                                                        payload: [{data: books, id: book.id, title: book.title, type: 'DELETE_PRODUCT', show: true }]
+                                                    })}>
+                                                        Delete
+                                                    </Button>
+                                                </div>
+                                            )
+                                        }
+
                                     </CardActions>
                                 </Card>
                             </Grid>
