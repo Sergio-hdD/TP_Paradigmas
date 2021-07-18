@@ -11,7 +11,6 @@ import IconButton from '@material-ui/core/IconButton';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import { makeStyles } from '@material-ui/core/styles';
 
 
 const Navbar = () => {
@@ -44,9 +43,9 @@ const Navbar = () => {
                     open={open}
                     onClose={handleClose}
                 >
-                    <MenuItem onClick={handleClose}>Profile</MenuItem>
+                    <MenuItem onClick={handleClose} component={Link} to="/profile">Profile</MenuItem>
                     {
-                        auth.user && auth.user.isAdmin && adminRouter()
+                        auth.user.isAdmin && adminRouter()
                     }
                     <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </Menu>
@@ -63,8 +62,8 @@ const Navbar = () => {
 
     const handleLogout = () => {
         localStorage.clear()
-        dispatch({type: 'AUTH', payload: {}})
-        return dispatch({ type: 'NOTIFY', payload: {success: 'Logout Successfully', show: true } })
+        dispatch({ type: 'AUTH', payload: {} })
+        return dispatch({ type: 'NOTIFY', payload: { success: 'Logout Successfully', show: true } })
     }
 
     const [anchorEl, setAnchorEl] = useState(null);
@@ -96,8 +95,10 @@ const Navbar = () => {
                         <Button color="inherit" component={Link} to={'/cart'}>
                             <FolderIcon />
                         </Button>
+
                         {
-                            !auth && (
+                            Object.keys(auth).length === 0
+                                ?
                                 <>
                                     <Button color="inherit" component={Link} to={'/register'}>
                                         Register
@@ -106,10 +107,9 @@ const Navbar = () => {
                                         Login
                                     </Button>
                                 </>
-                            )
+                                : loggedRouter()
                         }
 
-                        {auth && loggedRouter()}
                     </Grid>
                 </Grid>
             </Toolbar>

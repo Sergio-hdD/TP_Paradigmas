@@ -85,8 +85,8 @@ const Cart = () => {
     return (
 
         <div className={classes.root} >
-            <Grid container spacing={2} >
-                <Grid item xs={12} md={7}>
+            <Grid container spacing={2} justifyContent="center">
+                <Grid item xs={12} md={10}>
                     <Typography variant="h5" className={classes.title}>
                         Cart
                     </Typography>
@@ -124,38 +124,10 @@ const Cart = () => {
                 </Grid>
                 <Grid item xs={12} md={5}>
                     <div className={classes.demo}>
-                        <form>
-                            <Typography variant="h5" className={classes.title}>
-                                Shipping
-                            </Typography>
-                            <TextField
-                                variant="outlined"
-                                margin="normal"
-                                required
-                                fullWidth
-                                id="address"
-                                label="Address"
-                                name="address"
-                                autoComplete="address"
-                                autoFocus
-                            />
-
-                            <TextField
-                                variant="outlined"
-                                margin="normal"
-                                required
-                                fullWidth
-                                id="mobile"
-                                label="Mobile"
-                                name="mobile"
-                                autoComplete="mobile"
-                                autoFocus
-                            />
-                        </form>
 
                         <h3>Total: <span>${total}</span></h3>
 
-                        <Button variant="contained" color="primary" component={Link} to={auth.user ? "#" : "/signin"}>
+                        <Button variant="contained" color="primary" component={Link} to={auth.user ? "/checkout" : "/signin"}>
                             Proceed with payment
                         </Button>
 

@@ -6,7 +6,7 @@ export const DataContext = createContext()
 
 export const DataProvider = ({ children }) => {
 
-    const initialState = { notify: { show: false }, auth: { user: { name : 'Franco', email: 'FrancoAguirre644@gmail.com', isAdmin: true } }, modal: [{ show: false }], books: [], cart: [] }
+    const initialState = { notify: { show: false }, auth: { user: { name : 'Franco', email: 'FrancoAguirre644@gmail.com', isAdmin: true } }, modal: [{ show: false }], books: [], cart: [], grid: true }
 
     const [state, dispatch] = useReducer(reducers, initialState)
 
@@ -17,7 +17,7 @@ export const DataProvider = ({ children }) => {
         const token = localStorage.getItem('token');
         /*
         if (token) {
-
+ 
             getData('users', token).then(res => {
                 if (res.error) return localStorage.removeItem('firstLogin')
     

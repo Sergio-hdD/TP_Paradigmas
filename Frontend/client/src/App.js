@@ -7,12 +7,14 @@ import Book from './components/Books/Book'
 import BookCreate from './components/Books/CreateBook'
 import EditBook from './components/Books/EditBook'
 import BookIndex from './components/Books/BookIndex'
-import CreateBook from './components/Books/CreateBook'
 import Cart from './components/Cart'
+import Checkout from './components/Checkout/Checkout';
 import { DataProvider } from '../src/store/GlobalState'
 import Notify from './components/Notify';
 import ModalCustom from './components/ModalCustom';
 import Navbar from './components/Navbar';
+import Profile from './components/Profile';
+
 
 function App() {
   return (
@@ -23,7 +25,6 @@ function App() {
 
           <Navbar />
 
-
           <Route path="/" component={Home} exact />
           <Route path="/login" component={Login} exact />
           <Route path="/register" component={Register} exact />
@@ -32,6 +33,8 @@ function App() {
           <Route path="/books" component={BookIndex} exact />
           <Route path="/books/new" component={BookCreate} exact />
           <Route path="/cart" component={Cart} exact />
+          <Route path="/checkout" component={Checkout} exact />
+          <Route path="/profile" component={Profile} exact />
 
         </Router>
 

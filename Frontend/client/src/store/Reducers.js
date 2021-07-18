@@ -42,6 +42,11 @@ const reducers = (state, action) => {
                 ...state,
                 books: action.payload
             }
+        case ACTIONS.ADD_GRID:
+            return {
+                ...state,
+                grid: action.payload
+            }
         default:
             return state
     }

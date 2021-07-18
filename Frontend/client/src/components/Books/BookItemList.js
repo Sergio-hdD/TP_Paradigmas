@@ -9,19 +9,11 @@ import ButtonBase from '@material-ui/core/ButtonBase'
 import { DataContext } from '../../store/GlobalState'
 import { addToCart } from '../../store/Actions'
 
-const Book = ({ match }) => {
+const BookItemList = ({ book }) => {
 
     const { state, dispatch } = useContext(DataContext)
 
-    const { cart } = state
-
-    const [book, setBook] = useState({})
-
-    useEffect(() => {
-        getData(`books/${match.params.id}`).then(res => {
-            setBook(res)
-        })
-    }, [match.params.id])
+    const { books, cart } = state
 
     const useStyles = makeStyles((theme) => ({
         root: {
@@ -30,12 +22,11 @@ const Book = ({ match }) => {
         },
         paper: {
             padding: theme.spacing(2),
-            margin: 'auto',
-            maxWidth: 800,
+            margin: 'auto'
         },
         image: {
             width: 210,
-            height: 200,
+            height: 150,
         },
         img: {
             margin: 'auto',
@@ -47,15 +38,13 @@ const Book = ({ match }) => {
 
     const classes = useStyles();
 
-    if(!book.title) return null;
-
     return (
-        <div className={classes.root}>
+        <div className={classes.root} maxWidth="md">
             <Paper className={classes.paper}>
                 <Grid container spacing={2}>
                     <Grid item>
                         <ButtonBase className={classes.image}>
-                            <img className={classes.img} alt="complex" src="https://static01.nyt.com/images/2020/11/03/obituaries/25maradona-ES-1/00Maradona-mediumSquareAt3X.jpg" />
+                            <img className={classes.img} alt="complex" src="https://source.unsplash.com/random" style={{objectFit: 'cover'}} />
                         </ButtonBase>
                     </Grid>
                     <Grid item xs={12} sm container>
@@ -72,14 +61,6 @@ const Book = ({ match }) => {
                                     In Stock
                                 </Typography>
                             </Grid>
-                            <Grid item>
-                                <Typography variant="body2" style={{ cursor: 'pointer' }}>
-                                    <Button variant="contained" color="secondary" disabled={book.inStock === 0 ? true : false}
-                                        onClick={() => dispatch(addToCart(book, cart))}>
-                                        Add to cart
-                                    </Button>
-                                </Typography>
-                            </Grid>
                         </Grid>
                         <Grid item>
                             <Typography variant="subtitle1">${book.price}</Typography>
@@ -88,9 +69,7 @@ const Book = ({ match }) => {
                 </Grid>
             </Paper>
         </div>
-    );
-
+    )
 }
 
-export default Book
-
+export default BookItemList
