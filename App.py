@@ -7,40 +7,36 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt import JWT, jwt_required, current_identity, JWT
 from werkzeug.security import safe_str_cmp
 from datetime import timedelta
+from bson.objectid import ObjectId
+from marshmallow import Schema, fields
 
 
 app = Flask(__name__)
 CORS(app)
-'''
 app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy dog'
 app.config['JWT_AUTH_USERNAME_KEY'] = 'email'
 app.config['JWT_AUTH_URL_RULE'] = '/api/v1/users/auth'
 app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=3600)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:ser.23@localhost/api-python'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-'''
 app.config['MONGOALCHEMY_DATABASE'] = 'api-python'
+
 db = MongoAlchemy(app)
 
 ma = Marshmallow(app)
 auth = HTTPBasicAuth()
 
 #BOOKS
-#BOOKS
 class Book(db.Document):
-    id = db.IntField()
     title = db.StringField()
     description = db.StringField()
-    price = db.FloatField()
-    fechaSolicitud = db.StringField()
-    fechaEntrega = db.StringField()
+    price = db.IntField()
     inStock = db.IntField()
 
-
 class BookSchema(ma.Schema):
-    class Meta:
-        fields = ('id', 'title', 'description', 'price', 'fechaSolicitud', 'fechaEntrega', 'inStock')
-
+    id = fields.Str(attribute="mongo_id")
+    title = fields.Str()
+    description = fields.Str()
+    price = fields.Int()
+    inStock = fields.Int()
 
 book_schema = BookSchema()
 books_schema = BookSchema(many=True)
@@ -51,7 +47,7 @@ books_schema = BookSchema(many=True)
 def create_book():
     data = request.get_json()
 
-    new_book = Book(id = create_new_id("Book"), title = data['title'], description = data['description'], price = data['price'], fechaSolicitud = data['fechaSolicitud'], fechaEntrega = data['fechaEntrega'], inStock = data['inStock'])
+    new_book = Book(title = data['title'], description = data['description'], price = int(data['price']), inStock = int(data['inStock']))
     
     if Book.query.filter_by(title=data['title']).first(): # otra forma es Book.query.filter(Book.title == data['title']).first():
         return jsonify({'err': 'The book is already added.'})
@@ -71,12 +67,11 @@ def get_books():
 
 
 # Get a single book
-@app.route("/api/v1/books/<id>", methods=['GET'])
+@app.route("/api/v1/books/<string:id>", methods=['GET'])
 def get_book(id):
-#    book = Book.query.get(id) # este trae por ObjectId
-    book = Book.query.filter_by(id = int(id)).first()
-
-    return book_schema.jsonify(book)
+    book = Book.query.get(id) # este trae por ObjectId
+    #book = Book.query.filter_by(id = int(id)).first()
+    return jsonify(book_schema.dump(book))
 
 
 # Get single book by title
@@ -84,15 +79,15 @@ def get_book(id):
 def get_bookByTitle(title):
     book = Book.query.filter_by(title=title).first()
 
-    return book_schema.jsonify(book)
+    return jsonify(book_schema.dump(book))
 
 
 # Update a book
 @app.route("/api/v1/books/<id>", methods=['PUT'])
 @cross_origin()
 def update_book(id):
-#    book = Book.query.get(id) # este trae por ObjectId
-    book = Book.query.filter_by(id = int(id)).first()
+    #book = Book.query.get(id) # este trae por ObjectId
+    book = Book.query.get(id)
 
     data = request.get_json()
 
@@ -109,8 +104,8 @@ def update_book(id):
 # Delete a book
 @app.route("/api/v1/books/<id>", methods=['DELETE'])
 def delete_book(id):
-#    book = Book.query.get(id) # este trae por ObjectId
-    book = Book.query.filter_by(id = int(id)).first()
+    #book = Book.query.get(id) # este trae por ObjectId
+    book = Book.query.get(id)
     if book:
         book.remove()
         return jsonify({'msg': 'Book deleted Successfully.'})
@@ -278,23 +273,7 @@ def customized_response_handler(access_token, identity):
 
                    })
     
-def create_new_id(name_object):
-    ultimo_id = 0
-    if name_object == "User":
-        list_objects = User.query.all()
-    else:
-        list_objects = Book.query.all()
-    if list_objects:
-        for obj in list_objects:
-            if obj.id > ultimo_id:
-                ultimo_id = obj.id
-        ultimo_id = ultimo_id + 1
-    else:
-        ultimo_id = 1
-
-    return ultimo_id
-
 
 # Run server
 if __name__ == "__main__":
-    app.run(debug=True, port="4000")
+    app.run(debug=True, port=4000)

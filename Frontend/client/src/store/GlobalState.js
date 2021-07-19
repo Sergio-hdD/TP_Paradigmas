@@ -6,7 +6,7 @@ export const DataContext = createContext()
 
 export const DataProvider = ({ children }) => {
 
-    const initialState = { notify: { show: false }, auth: { user: { name : 'Franco', email: 'FrancoAguirre644@gmail.com', isAdmin: true } }, modal: [{ show: false }], books: [], cart: [], grid: true }
+    const initialState = { notify: { show: false }, auth: { user: { name : 'Franco', email: 'FrancoAguirre644@gmail.com', isAdmin: false } }, modal: [{ show: false }], books: [], cart: [], grid: true }
 
     const [state, dispatch] = useReducer(reducers, initialState)
 
