@@ -7,6 +7,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
+import Box from '@material-ui/core/Box';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { Link } from 'react-router-dom'
 import { addToCart } from '../../store/Actions'
@@ -15,7 +16,7 @@ const BookItem = ({ book }) => {
 
     const { state, dispatch } = useContext(DataContext)
 
-    const { books, cart, auth, grid } = state
+    const { books, cart, auth } = state
 
     const userLink = () => {
         return (
@@ -23,7 +24,7 @@ const BookItem = ({ book }) => {
                 <Button size="small" color="primary" component={Link} to={`/book/${book.id}`}>
                     View
                 </Button>
-                <Button size="small" color="primary"
+                <Button size="small" color="primary" disabled={book.inStock === 0 ? true : false}
                     onClick={() => dispatch(addToCart(book, cart))}>
                     Buy
                 </Button>
@@ -80,11 +81,26 @@ const BookItem = ({ book }) => {
                     <Typography gutterBottom variant="h5" component="h2">
                         {book.title}
                     </Typography>
+                    <Box mb={5}>
+                        <Typography style={{ float: 'left' }}>{`$${book.price}`}</Typography>
+                        <Typography style={{ float: 'right' }}>
+                            {
+                                book.inStock > 0
+                                    ? <Typography variant="body2" style={{ color: '#4caf50' }}>
+                                        In Stock: {book.inStock}
+                                    </Typography>
+                                    : <Typography variant="body2" style={{ color: '#e91e63' }}>
+                                        Out Stock
+                                    </Typography>
+                            }
+                        </Typography>
+                    </Box>
                     <Typography>
                         {book.description}
                     </Typography>
+
                 </CardContent>
-                <CardActions>
+                <CardActions style={{ 'justifyContent': 'center' }}>
 
                     {!auth.user || auth.user.isAdmin ? adminLink() : userLink()}
 

@@ -35,18 +35,18 @@ const Login = () => {
 
         if (errorMsg) return dispatch({ type: 'NOTIFY', payload: { error: errorMsg, show: true } })
 
-        const res = await postData('users/auth', user)
+        const res = await postData('users/login', user)
 
-        if (res.error) return dispatch({ type: 'NOTIFY', payload: { error: res.description, show: true } })
+        if (res.err) return dispatch({ type: 'NOTIFY', payload: { error: res.err, show: true } })
 
         dispatch({
             type: 'AUTH', payload: {
                 token: res.access_token,
                 user: res.user
             }
-        })
+        }) 
 
-        localStorage.setItem('token', res.access_token)
+        localStorage.setItem('jwt', res.access_token)
 
         return dispatch({ type: 'NOTIFY', payload: { success: 'logged Successfully', show: true } })
 

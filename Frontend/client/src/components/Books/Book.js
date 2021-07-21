@@ -47,7 +47,7 @@ const Book = ({ match }) => {
 
     const classes = useStyles();
 
-    if(!book.title) return null;
+    if (!book.title) return null;
 
     return (
         <div className={classes.root}>
@@ -68,9 +68,15 @@ const Book = ({ match }) => {
                                     {book.description}
                                     {book.description}
                                 </Typography>
-                                <Typography variant="body2" color="textSecondary">
-                                    In Stock
-                                </Typography>
+                                {
+                                    book.inStock > 0
+                                        ? <Typography variant="body2" style={{ color: '#4caf50' }}>
+                                            In Stock: {book.inStock}
+                                        </Typography>
+                                        : <Typography variant="body2" style={{ color: '#e91e63' }}>
+                                            Out Stock
+                                        </Typography>
+                                }
                             </Grid>
                             <Grid item>
                                 <Typography variant="body2" style={{ cursor: 'pointer' }}>

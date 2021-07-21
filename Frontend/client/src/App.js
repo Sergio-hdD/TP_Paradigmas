@@ -14,6 +14,7 @@ import Notify from './components/Notify';
 import ModalCustom from './components/ModalCustom';
 import Navbar from './components/Navbar';
 import Profile from './components/Profile';
+import Order from './components/Orders/Order';
 
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
           <Route path="/cart" component={Cart} exact />
           <Route path="/checkout" component={Checkout} exact />
           <Route path="/profile" component={Profile} exact />
+          <Route path="/orders/:id" component={Order} exact />
 
         </Router>
 

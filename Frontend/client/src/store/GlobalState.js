@@ -6,7 +6,7 @@ export const DataContext = createContext()
 
 export const DataProvider = ({ children }) => {
 
-    const initialState = { notify: { show: false }, auth: { user: { name : 'Franco', email: 'FrancoAguirre644@gmail.com', isAdmin: false } }, modal: [{ show: false }], books: [], cart: [], grid: true }
+    const initialState = { notify: { show: false }, auth: {} , modal: [{ show: false }], books: [], cart: [], orders: [], grid: true }
 
     const [state, dispatch] = useReducer(reducers, initialState)
 
@@ -14,26 +14,29 @@ export const DataProvider = ({ children }) => {
 
     useEffect(() => {
 
-        const token = localStorage.getItem('token');
-        /*
+        const token = localStorage.getItem('jwt'); 
+        
         if (token) {
- 
-            getData('users', token).then(res => {
-                if (res.error) return localStorage.removeItem('firstLogin')
-    
+            
+            postData('users/auth', token).then(res => {
+                console.log(res)
+
+                if (res.msg) return localStorage.removeItem('jwt')
+
                 dispatch({
                     type: "AUTH",
                     payload: {
-                        token: res.access_token,
+                        token: token,
                         user: res.user
                     }
                 })
     
-            })
-        } */
+            }) 
+        }  
 
-    })
+    }, [])
 
+    
     useEffect(() => {
         const __books__cart01 = JSON.parse(localStorage.getItem('__books__cart01'))
 
@@ -44,7 +47,7 @@ export const DataProvider = ({ children }) => {
         localStorage.setItem('__books__cart01', JSON.stringify(cart))
     }, [cart])
 
-    
+
     useEffect(() => {
 
         getData('books').then(res => {
@@ -53,6 +56,17 @@ export const DataProvider = ({ children }) => {
                 payload: res
             })
         })
+
+    }, [])
+
+
+    useEffect(() => {
+
+        getData('orders')
+            .then(res => {
+                if (res.err) return dispatch({ type: 'NOTIFY', payload: { error: res.err } })
+                dispatch({ type: 'ADD_ORDERS', payload: res })
+            })
 
     }, [])
 

@@ -11,13 +11,14 @@ import IconButton from '@material-ui/core/IconButton';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
+import Badge from '@material-ui/core/Badge';
 
 
 const Navbar = () => {
 
     const { state, dispatch } = useContext(DataContext)
 
-    const { auth } = state
+    const { auth, cart } = state
 
     const loggedRouter = () => {
         return (
@@ -45,7 +46,7 @@ const Navbar = () => {
                 >
                     <MenuItem onClick={handleClose} component={Link} to="/profile">Profile</MenuItem>
                     {
-                        auth.user.isAdmin && adminRouter()
+                        auth.user && auth.user.isAdmin && adminRouter() 
                     }
                     <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </Menu>
@@ -54,10 +55,9 @@ const Navbar = () => {
     }
 
     const adminRouter = () => {
-        return [
-            <MenuItem onClick={handleClose} component={Link} to="/books">Books</MenuItem>,
-            <MenuItem onClick={handleClose}>Categories</MenuItem>
-        ]
+        return (
+            <MenuItem onClick={handleClose} component={Link} to="/books">Books</MenuItem>
+        )
     }
 
     const handleLogout = () => {
@@ -93,7 +93,9 @@ const Navbar = () => {
 
                     <Grid item>
                         <Button color="inherit" component={Link} to={'/cart'}>
-                            <FolderIcon />
+                            <Badge color="secondary" badgeContent={cart.length} showZero>
+                                <FolderIcon />
+                            </Badge>
                         </Button>
 
                         {

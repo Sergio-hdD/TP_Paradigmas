@@ -38,10 +38,10 @@ const Register = () => {
         if (errorMsg) {
             return dispatch({ type: 'NOTIFY', payload: { error: errorMsg, show: true } })
         }
-        
+
         const res = await postData('users/register', user)
 
-        if (res.err) return dispatch({ type: 'NOTIFY', payload: { error: res.err, show: true } }) 
+        if (res.err) return dispatch({ type: 'NOTIFY', payload: { error: res.err, show: true } })
 
         dispatch({ type: 'NOTIFY', payload: { success: res.msg, show: true } })
 
@@ -131,29 +131,35 @@ const Register = () => {
                             value={user.email}
                         />
 
-                        <Grid container justifyContent="space-between">
-                            <TextField
-                                variant="outlined"
-                                margin="normal"
-                                name="password"
-                                label="Password"
-                                type="password"
-                                id="password"
-                                autoComplete="current-password"
-                                onChange={handleChangeInput}
-                                value={user.password}
-                            />
-                            <TextField
-                                variant="outlined"
-                                margin="normal"
-                                name="cf_password"
-                                label="Confirm Password"
-                                type="password"
-                                id="password"
-                                autoComplete="current-password"
-                                onChange={handleChangeInput}
-                                value={user.cf_password}
-                            />
+                        <Grid container>
+                            <Grid item md={6} xs={12} style={{paddingRight: '4px'}}>
+                                <TextField
+                                    variant="outlined"
+                                    margin="normal"
+                                    name="password"
+                                    label="Password"
+                                    type="password"
+                                    id="password"
+                                    autoComplete="current-password"
+                                    fullWidth
+                                    onChange={handleChangeInput}
+                                    value={user.password}
+                                />
+                            </Grid>
+                            <Grid item md={6} xs={12}>
+                                <TextField
+                                    variant="outlined"
+                                    margin="normal"
+                                    name="cf_password"
+                                    label="Confirm Password"
+                                    type="password"
+                                    id="password"
+                                    fullWidth
+                                    autoComplete="current-password"
+                                    onChange={handleChangeInput}
+                                    value={user.cf_password}
+                                />
+                            </Grid>
 
                         </Grid>
 

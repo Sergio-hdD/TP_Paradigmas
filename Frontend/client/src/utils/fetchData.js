@@ -19,7 +19,7 @@ export const postData = async (url, post, token) => {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `JWT ${token}`
+                Authorization: `Bearer ${localStorage.getItem('jwt')}`,
         },
         body: JSON.stringify(post)
     })

@@ -87,7 +87,7 @@ const Home = () => {
                         </ToggleButton>
                     </ToggleButtonGroup>
                 </Box>
-                <Container className={classes.cardGrid} maxWidth="md">
+                <Container maxWidth="md">
                     {/* End hero unit */}
                     <Grid container spacing={4}>
                         {books.map((book) => (

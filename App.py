@@ -9,6 +9,13 @@ from werkzeug.security import safe_str_cmp
 from datetime import timedelta
 from bson.objectid import ObjectId
 from marshmallow import Schema, fields
+import datetime
+
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
+from flask_jwt_extended import JWTManager
+
 
 
 app = Flask(__name__)
@@ -16,7 +23,7 @@ CORS(app)
 app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy dog'
 app.config['JWT_AUTH_USERNAME_KEY'] = 'email'
 app.config['JWT_AUTH_URL_RULE'] = '/api/v1/users/auth'
-app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=3600)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 app.config['MONGOALCHEMY_DATABASE'] = 'api-python'
 
 db = MongoAlchemy(app)
@@ -113,13 +120,11 @@ def delete_book(id):
 
 #USER
 class User(db.Document):
-    id = db.IntField()
     name = db.StringField()
     email = db.StringField()
     password = db.StringField()
     isAdmin = db.BoolField()
   
-
     def hash_password(self, password):
         self.password = generate_password_hash(password)
 
@@ -129,22 +134,12 @@ class User(db.Document):
     def __str__(self):
         return str(self.id) + " " + self.name + ", " + self.password
 
-def authenticate(email, password):
-    user = User.query.filter_by(email=email).first()
-
-    if user and check_password_hash(user.password, password):
-        return user
-
-def identity(payload):
-    user_id = payload['identity']
-    return User.query.get(user_id)
-
-
-
-
 class UserSchema(ma.Schema):
-    class Meta:
-        fields = ('id', 'name', 'email', 'password')
+    id = fields.Str(attribute="mongo_id")
+    name = fields.Str()
+    email = fields.Str()
+    password = fields.Str()
+    isAdmin = fields.Bool()
 
 
 user_schema = UserSchema()
@@ -156,47 +151,22 @@ users_schema = UserSchema(many=True)
 def register():
 
     userByEmail = User.query.filter_by(email=request.json.get('email')).first()
-    userByName = User.query.filter_by(name=request.json.get('username')).first() 
 
     if userByEmail:
         return {'err' : 'This email already exists.'}
 
-    if userByName:
-        return {'err' : 'This user name already exists.'}
-
-    new_user = User(id = create_new_id("User"), name = request.json.get('username'), email = request.json.get('email'), password = request.json.get('password'), isAdmin = False)
+    new_user = User(name = request.json.get('username'), email = request.json.get('email'), password = request.json.get('password'), isAdmin = False)
     new_user.hash_password(request.json.get('password'))
     
     new_user.save()  
 
     return jsonify({'msg': 'Registered Successfully'})
 
-
-# Create a user
-@app.route("/api/v1/users", methods=['POST'])
-@cross_origin()
-def create_user():
-    data = request.get_json()
-    userByEmail = User.query.filter_by(email=data['email']).first()
-    userByName = User.query.filter_by(name=data['username']).first() 
-
-    if userByEmail:
-        return {'err' : 'This email already exists.'}
-
-    if userByName:
-        return {'err' : 'This user name already exists.'}
-
-    new_user = User(id = create_new_id("User"), name = data['username'], email = data['email'], password = data['password'], isAdmin = False)
-    new_user.hash_password(request.json.get('password'))
-    new_user.save() 
-
-    return user_schema.jsonify(new_user)
-
 # Get a single user
 @app.route("/api/v1/users/<id>", methods=['GET'])
 def get_user(id):
 #    user = User.query.get(id) # este trae por ObjectId
-    user = User.query.filter_by(id = int(id)).first()
+    user = User.query.get(id)
 
     return user_schema.jsonify(user)
 
@@ -205,7 +175,10 @@ def get_user(id):
 @cross_origin()
 def update_user(id):
 #    user = User.query.get(id) # este trae por ObjectId
-    user = User.query.filter_by(id = int(id)).first()
+    user = User.query.get(id)
+
+    if not user:
+        return jsonify({'err': 'The user does not exist.'})
     
     data = request.get_json()
 
@@ -216,7 +189,7 @@ def update_user(id):
 
     user.save()
 
-    return user_schema.jsonify(user)
+    return jsonify({'msg': 'Updated Successfully'})
 
 
 # Delete a user
@@ -247,32 +220,106 @@ def getUserByName(name_input):
     user = User.query.filter_by(name=name_input).first()
     return book_schema.jsonify(user)
 
-jwt = JWT(app, authenticate, identity)
+jwt = JWTManager(app)
 
+#ORDER
 
-@app.route('/api/v1/users/')
-@jwt_required()
-def protected():
-    return {
-        "user": {   
-            "name": current_identity.name,
-            "email": current_identity.email 
-        }
-    }
+class Order(db.Document):
+    cart = db.ListField(db.DocumentField(Book), db_field='cart')
+    user = db.DocumentField(User)
+    created_at = db.DateTimeField(required=True, default=datetime.datetime.now())
+    total = db.IntField()
+    delivered = db.BoolField()
+    paid = db.BoolField()
 
+class OrderSchema(ma.Schema):
+    id = fields.Str(attribute="mongo_id")
+    cart = fields.List(fields.Nested(BookSchema))
+    user = fields.Nested(UserSchema)
+    created_at = fields.Date()
+    total = fields.Int()
+    delivered = fields.Bool()
+    paid = fields.Bool()
 
-@jwt.auth_response_handler
-def customized_response_handler(access_token, identity):
-    return jsonify({
-                        'access_token': access_token.decode('utf-8'), 
-                            'user': {
-                                'name': identity.name,
-                                'email': identity.email,
-                            }
-                        
+order_schema = OrderSchema()
+orders_schema = OrderSchema(many=True)
 
-                   })
+# Create a order
+@app.route("/api/v1/orders", methods=['POST'])
+@cross_origin()
+def create_order():
+    data = request.get_json()
+
+    comment_a = Book(title = 'sdfgdfgfdg', description = 'sfdgdfgfdgdfgfdgdfg', price = 100, inStock = 30)
+    comment_b = Book(title = 'sdfgdfgfdg2', description = 'sfdgdfgfdgdfgfdgdfg2', price = 100, inStock = 30)
+    user = User(name = 'Franco', email = 'francoaguirre644@gmail.com', password='', isAdmin=False)
     
+    cart = [comment_a, comment_b]
+
+    new_order = Order(cart = cart, user=user, total = data['total'], delivered = data['delivered'], paid = data['paid'])
+
+    new_order.save() # o también se puede hacer db.session.add(new_book)
+
+    return jsonify({'msg': 'Order Created Successfully.'})
+
+
+# Get a single order
+@app.route("/api/v1/orders/<id>", methods=['GET'])
+def get_order(id):
+    order = Order.query.get(id)
+
+    return order_schema.jsonify(order)
+
+# Get all orders
+@app.route("/api/v1/orders", methods=['GET'])
+def get_orders():
+    all_orders = Order.query.all()
+    results = orders_schema.dump(all_orders)
+
+    return jsonify(results)
+    
+
+@app.route("/api/v1/users/login", methods=["POST"])
+def login():
+    params = request.get_json() 
+    
+    email = params.get('email')
+    password = params.get('password')
+
+    if not email:
+        return jsonify({"err": "Missing email parameter"}), 400
+    if not password:
+        return jsonify({"err": "Missing password parameter"}), 400
+
+    user = User.query.filter_by(email=email).first()
+
+    if user is None or not check_password_hash(user.password, password):
+        return jsonify({"err": "Bad username or password"}), 401
+
+    access_token = create_access_token(identity=user.email)
+    
+    return jsonify(
+        { 
+            'access_token' :access_token,
+            'user' : {
+             'email': user.email,
+             'name': user.name,
+             'isAdmin': user.isAdmin
+            }
+        })  
+
+@app.route("/api/v1/users/auth", methods=["POST"])
+@jwt_required()
+def auth():
+    # Access the identity of the current user with get_jwt_identity
+    current_user = get_jwt_identity()
+    user = User.query.filter_by(email=current_user).first()
+    return jsonify({'user' : {
+             'email': user.email,
+             'name': user.name,
+             'isAdmin': user.isAdmin
+            }}), 200
+
 
 # Run server
 if __name__ == "__main__":
