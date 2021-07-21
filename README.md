@@ -44,3 +44,24 @@ ttkbootstrap (Bootstrap para Tkinter -> mejorar interfaces)
 ```
 pip install -U ttkbootstrap
 ```
+
+**Para usar lo último (mongodb y react), complementar con lo siguiente**
+
+## Ejecutar
+```
+1- pip install flask_mongoalchemy
+2- pip install flask_jwt_extended
+```
+## Acceder a TP_Paradigmas\Frontend\client
+
+Ejecutar por única vez
+``` 
+1-	npm install
+2-	npm i @material-ui/core
+3-	npm i react-router-dom
+```
+
+Para levantar el proyecto Ejecutar (previamente levantar mongod y correr el App.py)
+```
+npm start
+```

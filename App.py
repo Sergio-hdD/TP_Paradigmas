@@ -248,15 +248,16 @@ orders_schema = OrderSchema(many=True)
 @app.route("/api/v1/orders", methods=['POST'])
 @cross_origin()
 def create_order():
+    cart = []
     data = request.get_json()
 
-    comment_a = Book(title = 'sdfgdfgfdg', description = 'sfdgdfgfdgdfgfdgdfg', price = 100, inStock = 30)
-    comment_b = Book(title = 'sdfgdfgfdg2', description = 'sfdgdfgfdgdfgfdgdfg2', price = 100, inStock = 30)
-    user = User(name = 'Franco', email = 'francoaguirre644@gmail.com', password='', isAdmin=False)
-    
-    cart = [comment_a, comment_b]
+    for book in data['cart']:
+        new_book = Book(title = book['title'], description = book['description'], price = int(book['price']), inStock = int(book['inStock']))
+        cart.append(new_book)
 
-    new_order = Order(cart = cart, user=user, total = data['total'], delivered = data['delivered'], paid = data['paid'])
+    new_user = User(name = data['user']['name'], email = data['user']['email'], password = data['user']['password'], isAdmin = data['user']['isAdmin'])
+
+    new_order = Order(cart = cart, user=new_user, total = data['total'], delivered = data['delivered'], paid = data['paid'])
 
     new_order.save() # o también se puede hacer db.session.add(new_book)
 
