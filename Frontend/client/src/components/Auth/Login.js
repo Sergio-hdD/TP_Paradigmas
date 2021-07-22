@@ -1,4 +1,5 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { useHistory } from 'react-router';
 import { DataContext } from '../../store/GlobalState'
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -17,6 +18,14 @@ import { postData } from '../../utils/fetchData';
 const Login = () => {
 
     const { state, dispatch } = useContext(DataContext)
+
+    const { auth }  = state
+
+    const router = useHistory()
+
+    useEffect(() => {
+        if(auth.user) return router.push('/')
+    }, [auth])
 
     const [user, setUser] = useState({
         email: '',
@@ -48,7 +57,9 @@ const Login = () => {
 
         localStorage.setItem('jwt', res.access_token)
 
-        return dispatch({ type: 'NOTIFY', payload: { success: 'logged Successfully', show: true } })
+        dispatch({ type: 'NOTIFY', payload: { success: 'logged Successfully', show: true } })
+
+        router.push('/')
 
     }
 

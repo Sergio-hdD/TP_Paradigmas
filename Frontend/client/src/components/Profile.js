@@ -30,9 +30,8 @@ const Profile = () => {
     if (!auth.user) return null;
 
     return (
-        <Container maxWidth="md">
-            {/* End hero unit */}
-            <Grid container spacing={4} style={{ margin: '20px' }} justifyContent="center">
+        <Container maxWidth="md" component="main">
+            <Grid container spacing={4} style={{ marginTop: '20px' }} justifyContent="center">
                 <Grid item md="4" xs="12" >
                     <Typography variant="h4">
                         {auth.user.isAdmin ? 'User Admin' : 'Admin Profile'}

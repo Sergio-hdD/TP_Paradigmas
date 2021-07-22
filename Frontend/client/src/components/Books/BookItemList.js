@@ -6,13 +6,14 @@ import { getData } from '../../utils/fetchData'
 import Container from '@material-ui/core/Container'
 import { DataContext } from '../../store/GlobalState'
 import { addToCart } from '../../store/Actions'
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import { Link } from 'react-router-dom'
 import CardActions from '@material-ui/core/CardActions';
 import Box from '@material-ui/core/Box';
+import { useHistory } from 'react-router';
 
 
 const BookItemList = ({ book }) => {
@@ -21,12 +22,17 @@ const BookItemList = ({ book }) => {
 
     const { books, cart, auth } = state
 
+    const router = useHistory()
+
     const userLink = () => {
         return (
             <div>
-                <Button size="small" color="primary" component={Link} to={`/book/${book.id}`}>
-                    View
-                </Button>
+                {
+                    !router.location.pathname.includes('book/') &&
+                    <Button size="small" color="primary" component={Link} to={`/book/${book.id}`}>
+                        View
+                    </Button>
+                }
                 <Button size="small" color="primary" disabled={book.inStock === 0 ? true : false}
                     onClick={() => dispatch(addToCart(book, cart))}>
                     Buy
@@ -114,7 +120,7 @@ const BookItemList = ({ book }) => {
                     <div className={classes.controls} style={{ 'justifyContent': 'center' }}>
                         <CardActions>
 
-                            {!auth.user || auth.user.isAdmin ? adminLink() : userLink()}
+                            {!auth.user || !auth.user.isAdmin ? userLink() : adminLink()}
 
                         </CardActions>
                     </div>

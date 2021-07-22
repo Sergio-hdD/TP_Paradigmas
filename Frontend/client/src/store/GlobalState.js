@@ -19,7 +19,6 @@ export const DataProvider = ({ children }) => {
         if (token) {
             
             postData('users/auth', token).then(res => {
-                console.log(res)
 
                 if (res.msg) return localStorage.removeItem('jwt')
 

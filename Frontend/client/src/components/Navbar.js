@@ -85,7 +85,7 @@ const Navbar = () => {
                     justifyContent="space-between"
                     container
                 >
-                    <Grid item style={{ paddingTop: '8px' }}>
+                    <Grid item style={{  paddingTop: auth.user ? '7px' : '0px' }}>
                         <Typography variant="h6" color="inherit" component={Link} to={'/'}>
                             Books App
                         </Typography>

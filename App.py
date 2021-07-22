@@ -259,7 +259,7 @@ def create_order():
 
     new_order = Order(cart = cart, user=new_user, total = data['total'], delivered = data['delivered'], paid = data['paid'])
 
-    new_order.save() # o también se puede hacer db.session.add(new_book)
+    new_order.save() # o también se puede hacer db.session.add(new_order)
 
     return jsonify({'msg': 'Order Created Successfully.'})
 

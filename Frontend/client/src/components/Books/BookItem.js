@@ -102,7 +102,7 @@ const BookItem = ({ book }) => {
                 </CardContent>
                 <CardActions style={{ 'justifyContent': 'center' }}>
 
-                    {!auth.user || auth.user.isAdmin ? adminLink() : userLink()}
+                    {!auth.user || !auth.user.isAdmin ? userLink() : adminLink() }
 
                 </CardActions>
             </Card>

@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { DataContext } from '../store/GlobalState';
-import Navbar from '../components/Navbar'
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -18,7 +17,9 @@ import Divider from '@material-ui/core/Divider'
 import Button from '@material-ui/core/Button'
 import Box from '@material-ui/core/Box';
 import TextField from '@material-ui/core/TextField';
+import Container from '@material-ui/core/Container';
 import { Link } from 'react-router-dom'
+import PaypalBtn from './Checkout/PayPalBtn';
 
 const Cart = () => {
 
@@ -26,6 +27,9 @@ const Cart = () => {
 
     const { cart, auth } = state
 
+    const [adress, setAdress] = useState('')
+    const [mobile, setMobile] = useState('')
+    const [payment, setPayment] = useState(false)
     const [total, setTotal] = useState(0)
 
     useEffect(() => {
@@ -40,6 +44,12 @@ const Cart = () => {
         getTotal()
 
     }, [cart])
+
+    const handlePayment = () => {
+        if (!mobile || !adress)
+            return dispatch({ type: 'NOTIFY', payload: { error: 'Please add your address and mobile', show: true } })
+        setPayment(true)
+    }
 
     const useStyles = makeStyles((theme) => ({
         root: {
@@ -84,9 +94,9 @@ const Cart = () => {
 
     return (
 
-        <div className={classes.root} >
-            <Grid container spacing={2} justifyContent="center">
-                <Grid item xs={12} md={10}>
+        <Container maxWidth="md" component="main">
+            <Grid container spacing={2}>
+                <Grid item xs={12} md={7}>
                     <Typography variant="h5" className={classes.title}>
                         Cart
                     </Typography>
@@ -122,20 +132,55 @@ const Cart = () => {
 
                     </div>
                 </Grid>
+
                 <Grid item xs={12} md={5}>
                     <div className={classes.demo}>
+                        <form>
+                            <Typography variant="h5" className={classes.title}>
+                                Shipping
+                            </Typography>
+                            <TextField
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="address"
+                                label="Address"
+                                name="address"
+                                onChange={e => setAdress(e.target.value)}
+                            />
+
+                            <TextField
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="mobile"
+                                label="Mobile"
+                                name="mobile"
+                                onChange={e => setMobile(e.target.value)}
+                            />
+                        </form>
 
                         <h3>Total: <span>${total}</span></h3>
 
-                        <Button variant="contained" color="primary" component={Link} to={auth.user ? "/checkout" : "/signin"}>
-                            Proceed with payment
-                        </Button>
+                        {
+                            payment
+                                ? <PaypalBtn total={total}
+                                    adress={adress}
+                                    mobile={mobile}
+                                    state={state}
+                                    dispatch={dispatch}
+                                />
+                                : <Button variant="contained" color="primary" component={Link} to={auth.user ? "#" : "/login"}>
+                                    <a className="btn btn-dark my-2" onClick={handlePayment}>Proceed with payment</a>
+                                </Button>
+                        }
 
                     </div>
                 </Grid>
             </Grid>
-        </div>
-
+        </Container>
     );
 }
 
