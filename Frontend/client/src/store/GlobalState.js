@@ -6,7 +6,7 @@ export const DataContext = createContext()
 
 export const DataProvider = ({ children }) => {
 
-    const initialState = { notify: { show: false }, auth: {} , modal: [{ show: false }], books: [], cart: [], orders: [], grid: true }
+    const initialState = { notify: { show: false }, auth: {}, modal: [{ show: false }], books: [], cart: [], orders: [], grid: true }
 
     const [state, dispatch] = useReducer(reducers, initialState)
 
@@ -14,10 +14,10 @@ export const DataProvider = ({ children }) => {
 
     useEffect(() => {
 
-        const token = localStorage.getItem('jwt'); 
-        
+        const token = localStorage.getItem('jwt');
+
         if (token) {
-            
+
             postData('users/auth', token).then(res => {
 
                 if (res.msg) return localStorage.removeItem('jwt')
@@ -29,13 +29,21 @@ export const DataProvider = ({ children }) => {
                         user: res.user
                     }
                 })
-    
-            }) 
-        }  
+
+                getData('orders')
+                    .then(res => {
+                        if (res.msg) return dispatch({ type: 'NOTIFY', payload: { error: res.msg } })
+                        dispatch({ type: 'ADD_ORDERS', payload: res })
+                    })
+
+            })
+        } else {
+            dispatch({ type: 'ADD_ORDERS', payload: [] })
+        }
 
     }, [])
 
-    
+
     useEffect(() => {
         const __books__cart01 = JSON.parse(localStorage.getItem('__books__cart01'))
 
@@ -55,17 +63,6 @@ export const DataProvider = ({ children }) => {
                 payload: res
             })
         })
-
-    }, [])
-
-
-    useEffect(() => {
-
-        getData('orders')
-            .then(res => {
-                if (res.err) return dispatch({ type: 'NOTIFY', payload: { error: res.err } })
-                dispatch({ type: 'ADD_ORDERS', payload: res })
-            })
 
     }, [])
 

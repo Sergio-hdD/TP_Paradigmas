@@ -16,7 +16,7 @@ import { postData } from '../../utils/fetchData';
 
 const Register = () => {
 
-    const { state, dispatch } = useContext(DataContext)
+    const { dispatch } = useContext(DataContext)
 
     const [user, setUser] = useState({
         username: '',

@@ -18,7 +18,7 @@ import Box from '@material-ui/core/Box';
 
 const orderDetail = ({ orderDetail, state, classes }) => {
 
-    const { auth, orders } = state
+    const { auth } = state
 
     return (
         <React.Fragment>
@@ -31,7 +31,7 @@ const orderDetail = ({ orderDetail, state, classes }) => {
                                 <Grid item key={index} xs={12} sm={12} md={12}>
                                     <Card>
                                         <CardHeader
-                                            title={`Order ID: ${order.id} ${order.created_at}`}
+                                            title={`Order ID: ${order.paymentId}`}
                                             titleTypographyProps={{ align: 'left' }}
                                             className={classes.cardHeader}
                                         />
@@ -67,9 +67,30 @@ const orderDetail = ({ orderDetail, state, classes }) => {
                                             <Box fontWeight="fontWeightMedium" fontSize={16}>
                                                 Shipping Address
                                             </Box>
-                                            <Box fontSize={14} py={2}>
-                                                Kelly Williams 777 Brockton Avenue, Abington MA 2351
-                                            </Box>
+                                            <List dense className={classes.root}>
+
+                                                <ListItem>
+                                                    <ListItemText primary="Address:" />
+                                                    <ListItemSecondaryAction>
+                                                        {order.address}
+                                                    </ListItemSecondaryAction>
+                                                </ListItem>
+
+                                                <ListItem>
+                                                    <ListItemText primary="Name:" />
+                                                    <ListItemSecondaryAction >
+                                                        {order.user.name}
+                                                    </ListItemSecondaryAction>
+                                                </ListItem>
+
+                                                <ListItem>
+                                                    <ListItemText primary="Email:" />
+                                                    <ListItemSecondaryAction>
+                                                        {order.user.email}
+                                                    </ListItemSecondaryAction>
+                                                </ListItem>
+
+                                            </List>
                                         </CardContent>
                                     </Card>
                                 </Grid>

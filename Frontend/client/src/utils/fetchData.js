@@ -4,8 +4,9 @@ export const getData = async (url, token) => {
     const res = await fetch(`${baseURL}/${url}`, {
         method: 'GET',
         headers: {
-            'Authorization' : token
-        }
+            'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+        },
     })
 
     const data = await res.json()
@@ -33,7 +34,7 @@ export const putData = async (url, post, token) => {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization' : token
+                Authorization: `Bearer ${localStorage.getItem('jwt')}`,
         },
         body: JSON.stringify(post)
     })
@@ -44,11 +45,11 @@ export const putData = async (url, post, token) => {
 }
 
 export const patchData = async (url, post, token) => {
-    const res = await fetch(`${baseURL}/api/${url}`, {
+    const res = await fetch(`${baseURL}/${url}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization' : token
+                Authorization: `Bearer ${localStorage.getItem('jwt')}`,
         },
         body: JSON.stringify(post)
     })
@@ -63,8 +64,8 @@ export const deleteData = async (url, token) => {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization' : token
-        }
+                Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+        },
     })
 
     const data = await res.json()

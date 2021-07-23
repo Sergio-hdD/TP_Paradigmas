@@ -1,5 +1,5 @@
 import { withStyles } from '@material-ui/core/styles';
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { DataContext } from '../../store/GlobalState';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -10,7 +10,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Cancel from '@material-ui/icons/Cancel';
 import Check from '@material-ui/icons/CheckCircle';
-import { Link } from 'react-router-dom' 
+import { Link } from 'react-router-dom'
 
 const TableOrder = () => {
 
@@ -49,31 +49,36 @@ const TableOrder = () => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {orders.map((order) => (
-                        <StyledTableRow key={order.id}>
-                            <StyledTableCell component="th" scope="row">
-                                <Link to={`/orders/${order.id}`} style={{'color': 'black', 'textDecoration': 'underline'}}>
-                                    {order.id}
-                                </Link>
-                            </StyledTableCell>
-                            <StyledTableCell align="right">{order.created_at}</StyledTableCell>
-                            <StyledTableCell align="right">${order.total}</StyledTableCell>
-                            <StyledTableCell align="center">
-                                {
-                                    order.delivered ?
-                                        <h5><Check /></h5>
-                                        : <h5><Cancel /></h5>
-                                }
-                            </StyledTableCell>
-                            <StyledTableCell align="center">
-                                {
-                                    order.paid ?
-                                        <h5><Check /></h5>
-                                        : <h5><Cancel /></h5>
-                                }
-                            </StyledTableCell>
-                        </StyledTableRow>
-                    ))}
+
+                    {
+                        orders.map((order) => (
+                            <StyledTableRow key={order.id}>
+                                <StyledTableCell component="th" scope="row">
+                                    <Link to={`/orders/${order.id}`} style={{ 'color': 'black', 'textDecoration': 'underline' }}>
+                                        {order.id}
+                                    </Link>
+                                </StyledTableCell>
+                                <StyledTableCell align="right">{order.created_at}</StyledTableCell>
+                                <StyledTableCell align="right">${order.total}</StyledTableCell>
+                                <StyledTableCell align="center">
+                                    {
+                                        order.delivered ?
+                                            <h5><Check /></h5>
+                                            : <h5><Cancel /></h5>
+                                    }
+                                </StyledTableCell>
+                                <StyledTableCell align="center">
+                                    {
+                                        order.paid ?
+                                            <h5><Check /></h5>
+                                            : <h5><Cancel /></h5>
+                                    }
+                                </StyledTableCell>
+                            </StyledTableRow>
+                        ))
+                    }
+
+
                 </TableBody>
             </Table>
         </TableContainer>

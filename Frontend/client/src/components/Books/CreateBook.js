@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { DataContext } from '../../store/GlobalState';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -12,7 +12,9 @@ import { validBook } from '../../utils/valid'
 
 const CreateBook = () => {
 
-    const { dispatch } = useContext(DataContext)
+    const { state, dispatch } = useContext(DataContext)
+
+    const { auth } = state
 
     const [book, setBook] = useState({
         title: '',
@@ -40,6 +42,8 @@ const CreateBook = () => {
         return dispatch({ type: 'NOTIFY', payload: { success: res.msg, show: true } }) 
 
     }
+
+    if(!auth.user) return null
 
     return (
         <Container maxWidth="lg">

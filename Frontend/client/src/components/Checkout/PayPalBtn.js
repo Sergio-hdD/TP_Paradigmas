@@ -1,14 +1,15 @@
-import { useEffect, useRef, useContext } from 'react'
-import { patchData } from '../../utils/fetchData'
-import { DataContext } from '../../store/GlobalState'
+import { useEffect, useRef } from 'react'
+import { postData } from '../../utils/fetchData'
+import { useHistory } from 'react-router'
 
 
-const PaypalBtn = ({ order }) => {
+const PaypalBtn = ({ total, state, dispatch, mobile, address }) => {
 
     const refPaypalBtn = useRef()
 
-    const { state, dispatch } = useContext(DataContext)
-    const { auth, orders } = state
+    const { auth, cart, orders } = state
+
+    const router = useHistory()
 
     useEffect(() => {
         window.paypal.Buttons({
@@ -17,7 +18,7 @@ const PaypalBtn = ({ order }) => {
                 return actions.order.create({
                     purchase_units: [{
                         amount: {
-                            value: 400
+                            value: total
                         }
                     }]
                 });
@@ -26,23 +27,21 @@ const PaypalBtn = ({ order }) => {
                 // This function captures the funds from the transaction.
 
                 return actions.order.capture().then(function (details) {
-                        /*
-                    dispatch({ type: 'NOTIFY', payload: { loading: true } })
 
-                    patchData(`order/payment/${order._id}`, {
-                        paymentId: details.payer.payer_id
-                    }, auth.token)
-                        .then(res => {
-                            if (res.err) return dispatch({ type: 'NOTIFY', payload: { error: res.err } })
-                            { /*}
-                            dispatch(updateItem(orders, order._id, {
-                                ...order, paid: true, dateOfPayment: new Date().toISOString(),
-                                paymentId: details.payer.payer_id, method: 'Paypal'
-                            }, 'ADD_ORDERS'))
+                    let user = auth.user
+
+                    postData('orders', { address, mobile, cart, total, user, paymentId: details.id }, auth.token)
+                    .then(res => {
+                        if (res.err) return dispatch({ type: 'NOTIFY', payload: { error: res.err, show: true } })
                         
-                            return dispatch({ type: 'NOTIFY', payload: { success: res.msg } })
-                        }) */
-                        console.log(details)
+                        dispatch({ type: 'ADD_CART', payload: [] })
+                        dispatch({ type: 'ADD_ORDERS', payload: [...orders, res] })
+                        dispatch({ type: 'NOTIFY', payload: { success: 'Order created succesfully.', show: true } })
+
+                        router.push('/profile')
+
+                    })
+                    
                     // This function shows a transaction success message to your buyer.
                 });
             }

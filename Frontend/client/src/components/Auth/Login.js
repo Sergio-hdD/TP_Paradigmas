@@ -13,19 +13,19 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { validLogin } from '../../utils/valid';
-import { postData } from '../../utils/fetchData';
+import { getData, postData } from '../../utils/fetchData';
 
 const Login = () => {
 
     const { state, dispatch } = useContext(DataContext)
 
-    const { auth }  = state
+    const { auth } = state
 
     const router = useHistory()
 
     useEffect(() => {
-        if(auth.user) return router.push('/')
-    }, [auth])
+        if (auth.user) return router.push('/')
+    }, [auth, router])
 
     const [user, setUser] = useState({
         email: '',
@@ -53,9 +53,15 @@ const Login = () => {
                 token: res.access_token,
                 user: res.user
             }
-        }) 
+        })
 
         localStorage.setItem('jwt', res.access_token)
+
+        getData('orders')
+            .then(res => {
+                if (res.msg) return dispatch({ type: 'NOTIFY', payload: { error: res.msg } })
+                dispatch({ type: 'ADD_ORDERS', payload: res })
+            })
 
         dispatch({ type: 'NOTIFY', payload: { success: 'logged Successfully', show: true } })
 

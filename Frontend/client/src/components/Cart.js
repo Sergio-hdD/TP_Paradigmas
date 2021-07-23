@@ -27,7 +27,7 @@ const Cart = () => {
 
     const { cart, auth } = state
 
-    const [adress, setAdress] = useState('')
+    const [address, setAddress] = useState('')
     const [mobile, setMobile] = useState('')
     const [payment, setPayment] = useState(false)
     const [total, setTotal] = useState(0)
@@ -46,7 +46,7 @@ const Cart = () => {
     }, [cart])
 
     const handlePayment = () => {
-        if (!mobile || !adress)
+        if (!mobile || !address)
             return dispatch({ type: 'NOTIFY', payload: { error: 'Please add your address and mobile', show: true } })
         setPayment(true)
     }
@@ -69,7 +69,7 @@ const Cart = () => {
 
     if (cart.length === 0) {
         return (
-            <div className={classes.root} >
+            <Container maxWidth="md" component="main">
                 <Grid container spacing={2} >
                     <Grid item xs={12} md={12}>
                         <Typography variant="h5" className={classes.title}>
@@ -88,7 +88,7 @@ const Cart = () => {
                         </Box>
                     </Grid>
                 </Grid>
-            </div>
+            </Container>
         )
     }
 
@@ -107,9 +107,10 @@ const Cart = () => {
                                 <List key={book.id}>
                                     <ListItem>
                                         <ListItemAvatar>
-                                            <Avatar>
-                                                <BookIcon />
-                                            </Avatar>
+                                            <Avatar
+                                                alt="https://source.unsplash.com/random"
+                                                src="https://source.unsplash.com/random"
+                                            />
                                         </ListItemAvatar>
                                         <ListItemText
                                             primary={book.title}
@@ -147,7 +148,7 @@ const Cart = () => {
                                 id="address"
                                 label="Address"
                                 name="address"
-                                onChange={e => setAdress(e.target.value)}
+                                onChange={e => setAddress(e.target.value)}
                             />
 
                             <TextField
@@ -167,13 +168,13 @@ const Cart = () => {
                         {
                             payment
                                 ? <PaypalBtn total={total}
-                                    adress={adress}
+                                    address={address}
                                     mobile={mobile}
                                     state={state}
                                     dispatch={dispatch}
                                 />
                                 : <Button variant="contained" color="primary" component={Link} to={auth.user ? "#" : "/login"}>
-                                    <a className="btn btn-dark my-2" onClick={handlePayment}>Proceed with payment</a>
+                                    <a className="btn btn-dark my-2" onClick={auth.user ? handlePayment : 0}>Proceed with payment</a>
                                 </Button>
                         }
 

@@ -89,7 +89,7 @@ const Home = () => {
                 </Box>
                 <Container maxWidth="md">
                     {/* End hero unit */}
-                    <Grid container spacing={4}>
+                    <Grid container spacing={4} justifyContent="center">
                         {books.map((book) => (
                             grid ? <BookItem key={book.id} book={book} /> : <BookItemList key={book.id} book={book} />
                         ))}

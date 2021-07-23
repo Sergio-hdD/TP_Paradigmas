@@ -6,6 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
 import { Link } from 'react-router-dom'
+import { useHistory } from 'react-router';
 import FolderIcon from '@material-ui/icons/ShoppingCart'
 import IconButton from '@material-ui/core/IconButton';
 import AccountCircle from '@material-ui/icons/AccountCircle';
@@ -19,6 +20,8 @@ const Navbar = () => {
     const { state, dispatch } = useContext(DataContext)
 
     const { auth, cart } = state
+
+    const router = useHistory()
 
     const loggedRouter = () => {
         return (
@@ -46,7 +49,7 @@ const Navbar = () => {
                 >
                     <MenuItem onClick={handleClose} component={Link} to="/profile">Profile</MenuItem>
                     {
-                        auth.user && auth.user.isAdmin && adminRouter() 
+                        auth.user && auth.user.isAdmin && adminRouter()
                     }
                     <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </Menu>
@@ -63,7 +66,9 @@ const Navbar = () => {
     const handleLogout = () => {
         localStorage.clear()
         dispatch({ type: 'AUTH', payload: {} })
-        return dispatch({ type: 'NOTIFY', payload: { success: 'Logout Successfully', show: true } })
+        dispatch({ type: 'NOTIFY', payload: { success: 'Logout Successfully', show: true } })
+
+        router.push('/')
     }
 
     const [anchorEl, setAnchorEl] = useState(null);
@@ -85,7 +90,7 @@ const Navbar = () => {
                     justifyContent="space-between"
                     container
                 >
-                    <Grid item style={{  paddingTop: auth.user ? '7px' : '0px' }}>
+                    <Grid item style={{ paddingTop: auth.user ? '7px' : '0px' }}>
                         <Typography variant="h6" color="inherit" component={Link} to={'/'}>
                             Books App
                         </Typography>
