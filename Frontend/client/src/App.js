@@ -14,6 +14,7 @@ import ModalCustom from './components/ModalCustom';
 import Navbar from './components/Navbar';
 import Profile from './components/Profile';
 import Order from './components/Orders/Order';
+import Categories from './components/Categories';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           <Route path="/books/edit/:id" component={EditBook} exact />
           <Route path="/books" component={BookIndex} exact />
           <Route path="/books/new" component={BookCreate} exact />
+          <Route path="/categories" component={Categories} exact />
           <Route path="/cart" component={Cart} exact />
           <Route path="/profile" component={Profile} exact />
           <Route path="/orders/:id" component={Order} exact />

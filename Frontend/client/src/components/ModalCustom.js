@@ -28,6 +28,8 @@ const ModalCustom = () => {
 
                 if (item.type === 'DELETE_PRODUCT') deleteProduct(item)
 
+                if (item.type === 'ADD_CATEGORIES') deleteCategory(item)
+
                 dispatch({ type: 'ADD_MODAL', payload: [{ show: false }] })
 
             }
@@ -37,7 +39,7 @@ const ModalCustom = () => {
     }
 
     const deleteProduct = (item) => {
-        
+
         deleteData(`books/${item.id}`)
             .then(res => {
                 if (res.err) return dispatch({ type: 'NOTIFY', payload: { error: res.err, show: true } })
@@ -45,9 +47,19 @@ const ModalCustom = () => {
                 dispatch(deleteItem(item.data, item.id, 'ADD_BOOKS'))
 
                 return dispatch({ type: 'NOTIFY', payload: { success: res.msg, show: true } })
-            }) 
+            })
 
-        
+    }
+
+    const deleteCategory = (item) => {
+        deleteData(`categories/${item.id}`)
+            .then(res => {
+                if (res.err) return dispatch({ type: 'NOTIFY', payload: { error: res.err, show: true } })
+
+                dispatch(deleteItem(item.data, item.id, item.type))
+
+                return dispatch({ type: 'NOTIFY', payload: { success: res.msg, show: true } })
+            })
     }
 
 

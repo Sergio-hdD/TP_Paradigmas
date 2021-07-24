@@ -8,19 +8,23 @@ import { postData } from '../../utils/fetchData'
 import Container from '@material-ui/core/Container';
 import BookCard from './BookCard';
 import Button from '@material-ui/core/Button'
+import FormControl from '@material-ui/core/FormControl'
+import InputLabel from '@material-ui/core/InputLabel'
+import Select from '@material-ui/core/Select'
 import { validBook } from '../../utils/valid'
 
 const CreateBook = () => {
 
     const { state, dispatch } = useContext(DataContext)
 
-    const { auth } = state
+    const { auth, books, categories } = state
 
     const [book, setBook] = useState({
         title: '',
         description: '',
         price: 0,
-        inStock: 0
+        inStock: 0,
+        category: ''
     })
 
     const handleChangeInput = e => {
@@ -37,13 +41,15 @@ const CreateBook = () => {
 
         const res = await postData(`books`, book)
 
-        if (res.err) return dispatch({ type: 'NOTIFY', payload: { error: res.err, show: true } }) 
+        if (res.err) return dispatch({ type: 'NOTIFY', payload: { error: res.err, show: true } })
 
-        return dispatch({ type: 'NOTIFY', payload: { success: res.msg, show: true } }) 
+        dispatch({ type: "ADD_BOOKS", payload: [...books, res.newBook] })
+
+        return dispatch({ type: 'NOTIFY', payload: { success: res.msg, show: true } })
 
     }
 
-    if(!auth.user) return null
+    if (!auth.user) return null
 
     return (
         <Container maxWidth="lg">
@@ -98,7 +104,8 @@ const CreateBook = () => {
                                         onChange={handleChangeInput}
                                     />
                                 </Grid>
-                                <Grid item xs={12}>
+
+                                <Grid item item xs={12} sm={6}>
                                     <TextField
                                         id="inStock"
                                         name="inStock"
@@ -112,10 +119,31 @@ const CreateBook = () => {
                                         }}
                                         onChange={handleChangeInput}
                                     />
+
+                                </Grid>
+
+                                <Grid item item xs={12} sm={6}>
+                                    <FormControl variant="outlined" fullWidth>
+                                        <InputLabel>Category</InputLabel>
+                                        <Select
+                                            native
+                                            value={book.category}
+                                            onChange={handleChangeInput}
+                                            label="Category"
+                                            name="category"
+                                        >
+                                            <option value="all">All products</option>
+                                            {
+                                                categories.map(category => (
+                                                    <option value={category.name} key={category.id}>{category.name}</option>
+                                                ))
+                                            }
+                                        </Select>
+                                    </FormControl>
                                 </Grid>
                             </Grid>
 
-                            <Button type="submit" variant="contained" color="primary" style={{ marginTop: '10px' }}>
+                            <Button type="submit" variant="contained" color="primary" style={{ marginTop: '20px' }}>
                                 Create
                             </Button>
                         </form>

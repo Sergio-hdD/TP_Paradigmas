@@ -47,19 +47,6 @@ const Register = () => {
 
     }
 
-    function Copyright() {
-        return (
-            <Typography variant="body2" color="textSecondary" align="center">
-                {'Copyright © '}
-                <Link color="inherit" to="https://material-ui.com/">
-                    Your Website
-                </Link>{' '}
-                {new Date().getFullYear()}
-                {'.'}
-            </Typography>
-        );
-    }
-
     const useStyles = makeStyles((theme) => ({
         root: {
             height: '100vh',
@@ -179,9 +166,6 @@ const Register = () => {
                                 </Link>
                             </Grid>
                         </Grid>
-                        <Box mt={5}>
-                            <Copyright />
-                        </Box>
                     </form>
                 </div>
             </Grid>

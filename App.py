@@ -17,7 +17,6 @@ from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 
 
-
 app = Flask(__name__)
 CORS(app)
 app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy dog'
@@ -27,12 +26,14 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 app.config['MONGOALCHEMY_DATABASE'] = 'api-python'
 
 db = MongoAlchemy(app)
-
 ma = Marshmallow(app)
 auth = HTTPBasicAuth()
+jwt = JWTManager(app)
+
 
 #BOOKS
 class Book(db.Document):
+    id = db.ObjectIdField().gen()
     title = db.StringField()
     description = db.StringField()
     price = db.IntField()
@@ -50,9 +51,10 @@ books_schema = BookSchema(many=True)
 
 # Create a book
 @app.route("/api/v1/books", methods=['POST'])
-@cross_origin()
+@jwt_required()
 def create_book():
-    data = request.get_json()
+
+    data = request.get_json()    
 
     new_book = Book(title = data['title'], description = data['description'], price = int(data['price']), inStock = int(data['inStock']))
     
@@ -61,7 +63,10 @@ def create_book():
 
     new_book.save() # o también se puede hacer db.session.add(new_book)
 
-    return jsonify({'msg': 'Book Created Successfully.'})
+    return jsonify({
+        'msg': 'Book Created Successfully.',
+        'newBook': book_schema.dump(new_book)
+    })
 
 
 # Get all books
@@ -77,7 +82,6 @@ def get_books():
 @app.route("/api/v1/books/<string:id>", methods=['GET'])
 def get_book(id):
     book = Book.query.get(id) # este trae por ObjectId
-    #book = Book.query.filter_by(id = int(id)).first()
     return jsonify(book_schema.dump(book))
 
 
@@ -91,9 +95,8 @@ def get_bookByTitle(title):
 
 # Update a book
 @app.route("/api/v1/books/<id>", methods=['PUT'])
-@cross_origin()
+@jwt_required()
 def update_book(id):
-    #book = Book.query.get(id) # este trae por ObjectId
     book = Book.query.get(id)
 
     data = request.get_json()
@@ -105,11 +108,15 @@ def update_book(id):
 
     book.save()
 
-    return jsonify({'msg': 'Book Updated Successfully.'})
+    return jsonify({
+        'msg': 'Book Updated Successfully.',
+        'book': book_schema.dump(book)
+    })
 
 
 # Delete a book
 @app.route("/api/v1/books/<id>", methods=['DELETE'])
+@jwt_required()
 def delete_book(id):
     #book = Book.query.get(id) # este trae por ObjectId
     book = Book.query.get(id)
@@ -117,6 +124,84 @@ def delete_book(id):
         book.remove()
         return jsonify({'msg': 'Book deleted Successfully.'})
     return {'err' : 'The book does not exist.'}
+
+#CATEGORIES
+class Category(db.Document):
+    id = db.ObjectIdField().gen()
+    name = db.StringField()
+
+class CategorySchema(ma.Schema):
+    id = fields.Str(attribute="mongo_id")
+    name = fields.Str()
+
+category_schema = CategorySchema()
+categories_schema = CategorySchema(many=True)
+
+# Create a book
+@app.route("/api/v1/categories", methods=['POST'])
+@jwt_required()
+def create_category():
+    
+    data = request.get_json()    
+
+    new_category = Category(name = data['name'])
+    
+    if Category.query.filter_by(name=data['name']).first(): # otra forma es Book.query.filter(Book.title == data['title']).first():
+        return jsonify({'err': 'The book is already added.'})
+
+    new_category.save() # o también se puede hacer db.session.add(new_book)
+
+    return jsonify({
+        'msg': 'Category Created Successfully.',
+        'newCategory': category_schema.dump(new_category)
+    })
+
+
+
+# Get all books
+@app.route("/api/v1/categories", methods=['GET'])
+def get_categories():
+    all_categories = Category.query.all()
+    results = categories_schema.dump(all_categories)
+
+    return jsonify(results)
+
+
+# Get a single book
+@app.route("/api/v1/categories/<string:id>", methods=['GET'])
+def get_category(id):
+    category = Category.query.get(id) # este trae por ObjectId
+    return jsonify(category_schema.dump(category))
+
+# Update a book
+@app.route("/api/v1/categories/<id>", methods=['PUT'])
+@jwt_required()
+def update_category(id):
+    category = Category.query.get(id)
+
+    data = request.get_json()
+
+    category.name = data['name']
+
+    category.save()
+
+    return jsonify({
+            'msg': 'Category Updated Successfully.',
+            'category': category_schema.dump(category)
+        })
+
+
+# Delete a book
+@app.route("/api/v1/categories/<id>", methods=['DELETE'])
+@jwt_required()
+def delete_category(id):
+    #book = Book.query.get(id) # este trae por ObjectId
+    category = Category.query.get(id)
+    if not category:
+        return {'err' : 'The category does not exist.'}
+
+    category.remove()
+    return jsonify({'msg': 'Category deleted Successfully.'})
 
 #USER
 class User(db.Document):
@@ -171,101 +256,101 @@ def get_user(id):
     return user_schema.jsonify(user)
 
 # Update a user
-@app.route("/api/v1/users/<id>", methods=['PUT'])
-@cross_origin()
-def update_user(id):
-#    user = User.query.get(id) # este trae por ObjectId
-    user = User.query.get(id)
+@app.route("/api/v1/users/updateName", methods=['PATCH'])
+@jwt_required()
+def update_username():
+    current_user = get_jwt_identity()
+    user = User.query.filter_by(email=current_user).first()
 
     if not user:
         return jsonify({'err': 'The user does not exist.'})
     
     data = request.get_json()
 
-    user.name = data['username']
-    user.email = data['email']
-    user.password = data['password']
-    user.hash_password(request.json.get('password'))
-
+    user.name = data['name']
+    
     user.save()
 
-    return jsonify({'msg': 'Updated Successfully'})
+    return user_schema.jsonify(user)
 
 
-# Delete a user
-@app.route("/api/v1/users/<id>", methods=['DELETE'])
-def delete_user(id):
-#    user = User.query.get(id) # este trae por ObjectId
-    user = User.query.filter_by(id = int(id)).first()
-    if user:
-        user.remove()
-        return jsonify({'msg': 'User deleted Successfully.'})
-    return jsonify({'err': 'The user does not exist..'})
+# Update a user
+@app.route("/api/v1/users/resetPassword", methods=['PATCH'])
+@jwt_required()
+def reset_password():
+    current_user = get_jwt_identity()
+    user = User.query.filter_by(email=current_user).first()
 
-
-#check a user name and password
-@app.route("/api/v1/users/check/<name_input>/<password_input>", methods=['GET'])
-def getUserByNameAndPassword(name_input, password_input):
-
-    user = User.query.filter_by(name=name_input).first()
-    if user and check_password_hash(user.password, password_input):
-        return user_schema.jsonify(user)
+    if not user:
+        return jsonify({'err': 'The user does not exist.'})
     
-    return user_schema.jsonify({}) #simula que no encontró
+    data = request.get_json()
 
+    user.password = data['password']
+    user.hash_password(request.json.get('password'))
+    
+    user.save()
 
-#check a user name
-@app.route("/api/v1/users/check/<name_input>", methods=['GET'])
-def getUserByName(name_input):
-    user = User.query.filter_by(name=name_input).first()
-    return book_schema.jsonify(user)
+    return jsonify({'msg': 'Password updated Succesfully.'})
 
-jwt = JWTManager(app)
 
 #ORDER
 
 class Order(db.Document):
+    id = db.ObjectIdField().gen()
     cart = db.ListField(db.DocumentField(Book), db_field='cart')
     user = db.DocumentField(User)
+    address = db.StringField()
+    mobile = db.StringField()
     created_at = db.DateTimeField(required=True, default=datetime.datetime.now())
     total = db.IntField()
     delivered = db.BoolField()
     paid = db.BoolField()
+    paymentId= db.StringField()
+
 
 class OrderSchema(ma.Schema):
     id = fields.Str(attribute="mongo_id")
     cart = fields.List(fields.Nested(BookSchema))
     user = fields.Nested(UserSchema)
+    address = fields.Str()
+    mobile = fields.Str()
     created_at = fields.Date()
     total = fields.Int()
     delivered = fields.Bool()
     paid = fields.Bool()
+    paymentId= fields.Str()
 
 order_schema = OrderSchema()
 orders_schema = OrderSchema(many=True)
 
 # Create a order
 @app.route("/api/v1/orders", methods=['POST'])
-@cross_origin()
+@jwt_required()
 def create_order():
     cart = []
     data = request.get_json()
 
     for book in data['cart']:
-        new_book = Book(title = book['title'], description = book['description'], price = int(book['price']), inStock = int(book['inStock']))
+        new_book = Book(title = book['title'], description = book['description'], 
+            price = int(book['price']), inStock = int(book['inStock']))
+        
         cart.append(new_book)
 
-    new_user = User(name = data['user']['name'], email = data['user']['email'], password = data['user']['password'], isAdmin = data['user']['isAdmin'])
+    new_user = User(name = data['user']['name'], email = data['user']['email'], password = '', isAdmin = False)
 
-    new_order = Order(cart = cart, user=new_user, total = data['total'], delivered = data['delivered'], paid = data['paid'])
+    new_order = Order(cart = cart, user=new_user, address = data['address'], 
+        delivered= False, paid= True,mobile = data['mobile'], 
+        total = data['total'], paymentId= data['paymentId'])
 
     new_order.save() # o también se puede hacer db.session.add(new_order)
 
-    return jsonify({'msg': 'Order Created Successfully.'})
+    return order_schema.jsonify(new_order)
 
 
 # Get a single order
 @app.route("/api/v1/orders/<id>", methods=['GET'])
+@jwt_required()
 def get_order(id):
     order = Order.query.get(id)
 
@@ -273,11 +358,18 @@ def get_order(id):
 
 # Get all orders
 @app.route("/api/v1/orders", methods=['GET'])
+@jwt_required()
 def get_orders():
-    all_orders = Order.query.all()
-    results = orders_schema.dump(all_orders)
 
-    return jsonify(results)
+    current_user = get_jwt_identity()
+    user = User.query.filter_by(email=current_user).first()
+
+    if user.isAdmin:
+        all_orders = Order.query.all()
+    else:
+        all_orders = Order.query.filter(Order.user.email == user.email).all()
+
+    return jsonify(orders_schema.dump(all_orders))
     
 
 @app.route("/api/v1/users/login", methods=["POST"])

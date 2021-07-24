@@ -9,11 +9,14 @@ import Container from '@material-ui/core/Container';
 import BookCard from './BookCard';
 import Button from '@material-ui/core/Button'
 import { validBook } from '../../utils/valid'
+import { updateItem } from '../../store/Actions';
 
 
 const BookEdit = ({ match }) => {
 
-    const { dispatch } = useContext(DataContext)
+    const { state, dispatch } = useContext(DataContext)
+
+    const { books } = state
 
     const [book, setBook] = useState({})
 
@@ -40,6 +43,8 @@ const BookEdit = ({ match }) => {
         const res = await putData(`books/${book.id}`, book)
 
         if (res.err) return dispatch({ type: 'NOTIFY', payload: { error: res.err, show: true } }) 
+
+        dispatch(updateItem(books, book.id, res.book, 'ADD_BOOKS'))
 
         return dispatch({ type: 'NOTIFY', payload: { success: res.msg, show: true } }) 
 

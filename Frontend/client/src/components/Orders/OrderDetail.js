@@ -18,8 +18,6 @@ import Box from '@material-ui/core/Box';
 
 const orderDetail = ({ orderDetail, state, classes }) => {
 
-    const { auth } = state
-
     return (
         <React.Fragment>
             <CssBaseline />
