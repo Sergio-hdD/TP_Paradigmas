@@ -30,21 +30,6 @@ Flask-CORS (permite la comunicación a través de métodos HTTP -> Create, Post,
 pip install -U flask-cors
 ```
 
-PyMySQL (para comunicar Python con MySQL)
-```
-pip install PyMySQL
-```
-
-Marshmallow-SQLAlchemy
-```
-pip install -U marshmallow-sqlalchemy
-```
-
-ttkbootstrap (Bootstrap para Tkinter -> mejorar interfaces)
-```
-pip install -U ttkbootstrap
-```
-
 **Para usar lo último (mongodb y react), complementar con lo siguiente**
 
 ## Ejecutar
