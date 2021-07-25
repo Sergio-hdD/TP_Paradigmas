@@ -76,8 +76,8 @@ const ModalCustom = () => {
         },
     });
 
-    const [fullWidth, setFullWidth] = useState(true);
-    const [maxWidth, setMaxWidth] = useState('sm');
+    const [fullWidth] = useState(true);
+    const [maxWidth] = useState('sm');
 
     const DialogTitle = withStyles(styles)((props) => {
         const { children, classes, onClose, ...other } = props;

@@ -10,7 +10,6 @@ import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import BookIcon from '@material-ui/icons/Book';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ShoppingCart from '@material-ui/icons/ShoppingCart';
 import Divider from '@material-ui/core/Divider'
@@ -174,7 +173,7 @@ const Cart = () => {
                                     dispatch={dispatch}
                                 />
                                 : <Button variant="contained" color="primary" component={Link} to={auth.user ? "#" : "/login"}>
-                                    <a className="btn btn-dark my-2" onClick={auth.user ? handlePayment : 0}>Proceed with payment</a>
+                                    <div onClick={auth.user ? handlePayment : 0}>Proceed with payment</div>
                                 </Button>
                         }
 

@@ -24,7 +24,7 @@ const Home = () => {
 
     function Copyright() {
         return (
-            <Typography variant="body2" color="textSecondary" align="center">
+            <Typography>
                 {'Copyright © '}
                 Your Website {new Date().getFullYear()}
                 {'.'}

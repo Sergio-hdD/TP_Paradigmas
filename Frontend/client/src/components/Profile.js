@@ -76,7 +76,7 @@ const Profile = () => {
     return (
         <Container maxWidth="md" component="main">
             <Grid container spacing={4} style={{ marginTop: '20px' }} justifyContent="center">
-                <Grid item md="4" xs="12" >
+                <Grid item md={4} xs={12} >
                     <Typography variant="h4">
                         {auth.user.isAdmin ? 'Admin Profile' : 'User Profile'}
                     </Typography>
@@ -133,7 +133,7 @@ const Profile = () => {
 
                     </form>
                 </Grid>
-                <Grid item md="8" xs="12">
+                <Grid item md={8} xs={12}>
                     <Typography variant="h4" style={{ marginBottom: '10px' }}>
                         Orders
                     </Typography>

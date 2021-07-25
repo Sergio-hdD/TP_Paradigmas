@@ -30,7 +30,7 @@ const PaypalBtn = ({ total, state, dispatch, mobile, address }) => {
 
                     let user = auth.user
 
-                    postData('orders', { address, mobile, cart, total, user, paymentId: details.id }, auth.token)
+                    postData('orders', { address, mobile, cart, total, user, paymentId: details.id })
                     .then(res => {
                         if (res.err) return dispatch({ type: 'NOTIFY', payload: { error: res.err, show: true } })
                         
@@ -47,7 +47,7 @@ const PaypalBtn = ({ total, state, dispatch, mobile, address }) => {
             }
         }).render(refPaypalBtn.current);
         //This function displays Smart Payment Buttons on your web page.
-    }, [])
+    }, [total, state, dispatch, mobile, address, auth, cart, orders, router])
 
     return (
         <div ref={refPaypalBtn}></div>

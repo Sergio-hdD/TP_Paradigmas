@@ -107,7 +107,7 @@ const BookEdit = ({ match }) => {
                                     />
                                 </Grid>
 
-                                <Grid item item xs={12} sm={6}>
+                                <Grid item xs={12} sm={6}>
                                     <TextField
                                         id="inStock"
                                         name="inStock"
@@ -124,7 +124,7 @@ const BookEdit = ({ match }) => {
 
                                 </Grid>
 
-                                <Grid item item xs={12} sm={6}>
+                                <Grid item xs={12} sm={6}>
                                     <FormControl variant="outlined" fullWidth>
                                         <InputLabel>Category</InputLabel>
                                         <Select

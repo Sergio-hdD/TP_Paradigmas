@@ -12,7 +12,7 @@ const Order = ({ match }) => {
     const [orderDetail, setOrderDetail] = useState([])
 
     useEffect(() => {
-        const newArr = orders.filter(order => order.id == match.params.id)
+        const newArr = orders.filter(order => order.id === match.params.id)
         setOrderDetail(newArr)
     }, [orders, match.params.id])
 

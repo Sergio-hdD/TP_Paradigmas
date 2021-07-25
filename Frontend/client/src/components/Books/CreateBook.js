@@ -54,7 +54,7 @@ const CreateBook = () => {
     return (
         <Container maxWidth="lg">
             <Grid container justifyContent="center" style={{ marginTop: '30px' }} spacing="2">
-                <Grid item md="6">
+                <Grid item md={6}>
                     <Card style={{ padding: '30px' }}>
                         <form onSubmit={handleSubmit}>
                             <Typography gutterBottom variant="h5" component="h2" style={{ paddingBottom: '10px' }} >
@@ -105,7 +105,7 @@ const CreateBook = () => {
                                     />
                                 </Grid>
 
-                                <Grid item item xs={12} sm={6}>
+                                <Grid item xs={12} sm={6}>
                                     <TextField
                                         id="inStock"
                                         name="inStock"
@@ -122,7 +122,7 @@ const CreateBook = () => {
 
                                 </Grid>
 
-                                <Grid item item xs={12} sm={6}>
+                                <Grid item xs={12} sm={6}>
                                     <FormControl variant="outlined" fullWidth>
                                         <InputLabel>Category</InputLabel>
                                         <Select
@@ -149,7 +149,7 @@ const CreateBook = () => {
                         </form>
                     </Card>
                 </Grid>
-                <Grid item md="3">
+                <Grid item md={3}>
                     <BookCard book={book} />
                 </Grid>
             </Grid>

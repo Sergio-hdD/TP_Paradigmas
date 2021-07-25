@@ -1,3 +1,5 @@
+/* eslint-disable no-useless-escape */
+
 export const validRegister = (name, email, password, cf_password) => {
 
     if (!name || !email || !password || !cf_password) {

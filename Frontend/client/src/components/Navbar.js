@@ -58,10 +58,10 @@ const Navbar = () => {
 
     const adminRouter = () => {
         return (
-            <>
-                <MenuItem onClick={handleClose} component={Link} to="/books">Books</MenuItem>
+            [
+                <MenuItem onClick={handleClose} component={Link} to="/books">Books</MenuItem>,
                 <MenuItem onClick={handleClose} component={Link} to="/categories">Categories</MenuItem>
-            </>
+            ]
         )
     }
 
