@@ -8,6 +8,9 @@ import { getData, putData } from '../../utils/fetchData'
 import Container from '@material-ui/core/Container';
 import BookCard from './BookCard';
 import Button from '@material-ui/core/Button'
+import FormControl from '@material-ui/core/FormControl'
+import InputLabel from '@material-ui/core/InputLabel'
+import Select from '@material-ui/core/Select'
 import { validBook } from '../../utils/valid'
 import { updateItem } from '../../store/Actions';
 
@@ -16,7 +19,7 @@ const BookEdit = ({ match }) => {
 
     const { state, dispatch } = useContext(DataContext)
 
-    const { books } = state
+    const { books, categories } = state
 
     const [book, setBook] = useState({})
 
@@ -42,11 +45,11 @@ const BookEdit = ({ match }) => {
 
         const res = await putData(`books/${book.id}`, book)
 
-        if (res.err) return dispatch({ type: 'NOTIFY', payload: { error: res.err, show: true } }) 
+        if (res.err) return dispatch({ type: 'NOTIFY', payload: { error: res.err, show: true } })
 
         dispatch(updateItem(books, book.id, res.book, 'ADD_BOOKS'))
 
-        return dispatch({ type: 'NOTIFY', payload: { success: res.msg, show: true } }) 
+        return dispatch({ type: 'NOTIFY', payload: { success: res.msg, show: true } })
 
     }
 
@@ -103,13 +106,14 @@ const BookEdit = ({ match }) => {
                                         onChange={handleChangeInput}
                                     />
                                 </Grid>
-                                <Grid item xs={12}>
+
+                                <Grid item item xs={12} sm={6}>
                                     <TextField
                                         id="inStock"
                                         name="inStock"
                                         label="Stock"
-                                        variant="outlined"
                                         type="number"
+                                        variant="outlined"
                                         fullWidth
                                         value={book.inStock}
                                         InputLabelProps={{
@@ -117,7 +121,29 @@ const BookEdit = ({ match }) => {
                                         }}
                                         onChange={handleChangeInput}
                                     />
+
                                 </Grid>
+
+                                <Grid item item xs={12} sm={6}>
+                                    <FormControl variant="outlined" fullWidth>
+                                        <InputLabel>Category</InputLabel>
+                                        <Select
+                                            native
+                                            value={book.category}
+                                            onChange={handleChangeInput}
+                                            label="Category"
+                                            name="category"
+                                        >
+                                            <option value="all">All products</option>
+                                            {
+                                                categories.map(category => (
+                                                    <option value={category.name} key={category.id}>{category.name}</option>
+                                                ))
+                                            }
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
+
                             </Grid>
 
                             <Button type="submit" variant="contained" color="primary" style={{ marginTop: '10px' }}>

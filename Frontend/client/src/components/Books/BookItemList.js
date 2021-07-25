@@ -114,6 +114,9 @@ const BookItemList = ({ book }) => {
                         <Typography variant="subtitle1" color="textSecondary">
                             {book.description}
                         </Typography>
+                        <Typography variant="subtitle1">
+                            {book.category}
+                        </Typography>
                     </CardContent>
                     <div className={classes.controls} style={{ 'justifyContent': 'center' }}>
                         <CardActions>

@@ -38,6 +38,7 @@ class Book(db.Document):
     description = db.StringField()
     price = db.IntField()
     inStock = db.IntField()
+    category = db.StringField()
 
 class BookSchema(ma.Schema):
     id = fields.Str(attribute="mongo_id")
@@ -45,6 +46,7 @@ class BookSchema(ma.Schema):
     description = fields.Str()
     price = fields.Int()
     inStock = fields.Int()
+    category = fields.Str()
 
 book_schema = BookSchema()
 books_schema = BookSchema(many=True)
@@ -56,7 +58,9 @@ def create_book():
 
     data = request.get_json()    
 
-    new_book = Book(title = data['title'], description = data['description'], price = int(data['price']), inStock = int(data['inStock']))
+    new_book = Book(title = data['title'], description = data['description'],
+     price = int(data['price']), inStock = int(data['inStock']),
+     category = data['category'])
     
     if Book.query.filter_by(title=data['title']).first(): # otra forma es Book.query.filter(Book.title == data['title']).first():
         return jsonify({'err': 'The book is already added.'})
@@ -105,6 +109,7 @@ def update_book(id):
     book.description = data['description']
     book.price = data['price'] 
     book.inStock = data['inStock']
+    book.category = data['category']
 
     book.save()
 
