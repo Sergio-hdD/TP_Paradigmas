@@ -27,6 +27,7 @@ const BookEdit = ({ match }) => {
 
         getData(`books/${match.params.id}`).then(res => {
             setBook(res)
+            console.log(res)
         })
 
     }, [match.params.id])
