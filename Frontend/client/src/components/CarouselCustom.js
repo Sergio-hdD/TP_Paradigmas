@@ -1,7 +1,7 @@
 import Carousel from 'react-material-ui-carousel'
 import { Grid } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles';
-import img3 from '../assets/img/banner-1.jpg'
+import img3 from '../assets/img/Banner-1.jpg'
 import img1 from '../assets/img/banner-3.jpg'
 import img2 from '../assets/img/banner-2.jpg'
 
