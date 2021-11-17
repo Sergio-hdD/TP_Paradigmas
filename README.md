@@ -1,14 +1,6 @@
 # TP_Paradigmas
 
-Hasta ahora funciona de la siguiente forma:
-- En una terminal correr el App.py (corriendo directamente el archivo .py)
-- Por otra parte correr el mi_login.py, luego de haberse logeado se redirigirá al books.py (dónde está el ABM de libros)
-
 Librerías necesarias para correrlo:
-Tkinter (para trabajar con interfaces gráficas)
-```
-pip install tk
-```
 
 Flask (para levantar un server rápidamente)
 ```
